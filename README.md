@@ -225,3 +225,17 @@ sudo chmod 600 /var/www/sigi/.env
 ```
 sudo systemctl restart apache2
 ```
+
+## 11. Migrações (sem db init)
+
+
+- Produção (MySQL): após criar o DB e setar DATABASE_URL
+
+```
+flask db upgrade   # aplica migrations já incluídas
+```
+
+- Desenvolvimento (SQLite):
+
+```
+flask db upgrade   # cria sigi.db com tabelas
