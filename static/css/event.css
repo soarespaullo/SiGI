@@ -1,0 +1,76 @@
+/* ===========================
+   EVENT PAGE (Novo Evento)
+   =========================== */
+
+.event-card {
+  border-radius: 12px;
+  overflow: hidden;
+}
+
+.event-card .card-header {
+  font-weight: 600;
+  font-size: 1.1rem;
+}
+
+.event-card .form-label {
+  font-weight: 500;
+  color: #343a40;
+}
+
+.event-card .form-control,
+.event-card .form-select {
+  border-radius: 8px;
+  box-shadow: inset 0 1px 2px rgba(0,0,0,0.05);
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.event-card .form-control:focus,
+.event-card .form-select:focus {
+  border-color: #0d6efd;
+  box-shadow: 0 0 0 0.2rem rgba(13,110,253,.25);
+}
+
+.event-card button {
+  min-width: 120px;
+  border-radius: 8px;
+}
+
+.event-card .btn-success {
+  background-color: #198754;
+  border: none;
+}
+
+.event-card .btn-success:hover {
+  background-color: #157347;
+}
+
+.event-card .btn-secondary {
+  background-color: #6c757d;
+  border: none;
+}
+
+.event-card .btn-secondary:hover {
+  background-color: #5c636a;
+}
+
+/* ===========================
+   EVENT PAGE (Lista de Eventos)
+   =========================== */
+
+.event-card .card-body p {
+  font-size: 0.9rem;
+}
+
+.event-card .card-footer {
+  background-color: #f8f9fa;
+}
+
+.event-card .btn-sm {
+  border-radius: 6px;
+  padding: 0.25rem 0.5rem;
+}
+
+
+#searchInput {
+  max-width: 300px;
+}

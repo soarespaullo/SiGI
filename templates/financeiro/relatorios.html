@@ -1,0 +1,129 @@
+{% extends "base.html" %}
+{% block title %}Relatórios Financeiros{% endblock %}
+{% block content %}
+<div class="container mt-4">
+  <h2 class="mb-4"><i class="bi bi-journal-text text-primary"></i> Relatórios</h2>
+
+  <div class="card shadow-sm mb-4">
+    <div class="card-body">
+      <form method="POST">
+        {{ form.hidden_tag() }}
+        <div class="row g-3">
+          <div class="col-md-3">
+            {{ form.inicio.label(class="form-label") }}
+            {{ form.inicio(class="form-control", placeholder="dd/mm/aaaa") }}
+          </div>
+          <div class="col-md-3">
+            {{ form.fim.label(class="form-label") }}
+            {{ form.fim(class="form-control", placeholder="dd/mm/aaaa") }}
+          </div>
+          <div class="col-md-3">
+            {{ form.tipo.label(class="form-label") }}
+            {{ form.tipo(class="form-select") }}
+          </div>
+          <div class="col-md-3">
+            {{ form.categoria.label(class="form-label") }}
+            {{ form.categoria(class="form-control", placeholder="Categoria (opcional)") }}
+          </div>
+        </div>
+        <div class="mt-3 d-flex gap-2">
+          {{ form.submit(class="btn btn-primary") }}
+          <a class="btn btn-outline-secondary"
+             href="{{ url_for('financeiro.export_csv',
+                               inicio=form.inicio.data.strftime('%d-%m-%Y') if form.inicio.data else '',
+                               fim=form.fim.data.strftime('%d-%m-%Y') if form.fim.data else '',
+                               tipo=form.tipo.data if form.tipo.data else '',
+                               categoria=form.categoria.data if form.categoria.data else '') }}">
+            Exportar CSV
+          </a>
+          <!-- Botão PDF (placeholder para implementar depois) -->
+          <a class="btn btn-outline-danger" href="#">
+            Exportar PDF
+          </a>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <div class="row g-4">
+    <div class="col-md-4">
+      <div class="card shadow-sm">
+        <div class="card-body">
+          <h6>Total</h6>
+          <h3>{{ total|currency }}</h3>
+          <p class="mb-0 text-success">Entradas: {{ total_entradas|currency }}</p>
+          <p class="mb-0 text-danger">Saídas: {{ total_saidas|currency }}</p>
+        </div>
+      </div>
+    </div>
+    <div class="col-md-8">
+      <div class="card shadow-sm">
+        <div class="card-body">
+          <h5 class="card-title"><i class="bi bi-pie-chart"></i> Por categoria</h5>
+          <!-- Gráfico menor -->
+          <div style="height:200px;">
+            <canvas id="pieChart"></canvas>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card shadow-sm mt-4">
+    <div class="card-body">
+      <h5 class="card-title">Registros</h5>
+      <table class="table table-striped align-middle">
+        <thead>
+          <tr>
+            <th>Data</th><th>Tipo</th><th>Categoria</th><th>Conta</th><th>Descrição</th><th>Valor (R$)</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for r in registros %}
+          <tr>
+            <td>{{ r.data.strftime('%d/%m/%Y') }}</td>
+            <td>{{ r.tipo }}</td>
+            <td>{{ r.categoria }}</td>
+            <td>{{ r.conta }}</td>
+            <td>{{ r.descricao or '-' }}</td>
+            <td>{{ r.valor|currency }}</td>
+          </tr>
+          {% else %}
+          <tr><td colspan="6" class="text-center text-muted">Nenhum registro no período.</td></tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+  const labels = {{ categorias_labels|tojson }};
+  const dataVals = {{ categorias_data|tojson }};
+  new Chart(document.getElementById('pieChart'), {
+    type: 'pie',
+    data: {
+      labels: labels,
+      datasets: [{
+        data: dataVals,
+        backgroundColor: [
+          'rgba(25,135,84,0.7)',
+          'rgba(220,53,69,0.7)',
+          'rgba(13,110,253,0.7)',
+          'rgba(255,193,7,0.7)',
+          'rgba(32,201,151,0.7)',
+          'rgba(111,66,193,0.7)'
+        ]
+      }]
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      plugins: {
+        legend: { position: 'bottom' }
+      }
+    }
+  });
+</script>
+{% endblock %}

@@ -1,0 +1,97 @@
+{% extends "base.html" %}
+{% block title %}Saídas{% endblock %}
+{% block content %}
+<div class="container mt-4">
+  <h2 class="mb-4"><i class="bi bi-arrow-up-circle text-danger"></i> Saídas (Despesas)</h2>
+
+  <div class="card shadow-sm mb-4">
+    <div class="card-body">
+      <form method="POST">
+        {{ form.hidden_tag() }}
+        <div class="row g-3">
+          <div class="col-md-3">
+            {{ form.categoria.label(class="form-label") }}
+            {{ form.categoria(class="form-select") }}
+          </div>
+          <div class="col-md-3">
+            {{ form.valor.label(class="form-label") }}
+            {{ form.valor(class="form-control", placeholder="0.00") }}
+          </div>
+          <div class="col-md-3">
+            {{ form.data.label(class="form-label") }}
+            {{ form.data(class="form-control", placeholder="dd/mm/aaaa") }}
+          </div>
+          <div class="col-md-3">
+            {{ form.conta.label(class="form-label") }}
+            {{ form.conta(class="form-select") }}
+          </div>
+          <div class="col-12">
+            {{ form.descricao.label(class="form-label") }}
+            {{ form.descricao(class="form-control", placeholder="Descrição (opcional)") }}
+          </div>
+        </div>
+        <div class="mt-3 d-flex gap-2">
+          <!-- Botão Salvar com ícone -->
+          <button type="submit" class="btn btn-danger">
+            <i class="bi bi-check-circle"></i> Salvar
+          </button>
+          <!-- Botão Cancelar com ícone -->
+          <a href="{{ url_for('financeiro.financeiro') }}" class="btn btn-secondary">
+            <i class="bi bi-x-circle"></i> Cancelar
+          </a>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <div class="card shadow-sm">
+    <div class="card-body">
+      <h5 class="card-title">Histórico de Saídas</h5>
+      <table class="table table-striped align-middle">
+        <thead>
+          <tr>
+            <th>Data</th>
+            <th>Categoria</th>
+            <th>Conta</th>
+            <th>Descrição</th>
+            <th>Valor (R$)</th>
+            <th>Ações</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for r in saidas %}
+          <tr>
+            <!-- Data formatada dd/mm/yyyy -->
+            <td>{{ r.data.strftime('%d/%m/%Y') }}</td>
+            <td>{{ r.categoria }}</td>
+            <td>{{ r.conta }}</td>
+            <td>{{ r.descricao or '-' }}</td>
+            <!-- Valor formatado como moeda -->
+            <td>
+              {{ ("R$ {:,.2f}".format(r.valor)).replace(",", "X").replace(".", ",").replace("X", ".") }}
+            </td>
+            <!-- Botões de ações -->
+            <td>
+              <!-- Botão Editar -->
+              <a href="{{ url_for('financeiro.editar_saida', id=r.id) }}" class="btn btn-sm btn-outline-warning">
+                <i class="bi bi-pencil-square"></i> Editar
+              </a>
+              <!-- Botão Excluir -->
+              <form method="POST" action="{{ url_for('financeiro.excluir_saida', id=r.id) }}" style="display:inline;">
+                <button type="submit" class="btn btn-sm btn-outline-danger" onclick="return confirm('Deseja realmente excluir esta saída?');">
+                  <i class="bi bi-trash"></i> Excluir
+                </button>
+              </form>
+            </td>
+          </tr>
+          {% else %}
+          <tr>
+            <td colspan="6" class="text-center text-muted">Nenhuma saída registrada.</td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+{% endblock %}

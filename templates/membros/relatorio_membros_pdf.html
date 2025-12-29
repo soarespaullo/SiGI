@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+  <meta charset="UTF-8">
+  <title>Relatório de Membros</title>
+  <style>
+    @page {
+      size: A4;
+      margin-top: 4cm;
+      margin-right: 2cm;
+      margin-bottom: 2.5cm;
+      margin-left: 2cm;
+      @top-center { content: element(header); }
+      @bottom-center { content: element(footer); }
+    }
+
+    body { font-family: Arial, sans-serif; font-size: 12px; }
+
+    header {
+      position: running(header);
+      text-align: center;
+      padding: 25px 0;
+      margin-bottom: 20px;
+    }
+
+    header img {
+      height: 80px;
+      margin-top: 15px;
+    }
+
+    footer {
+      position: running(footer);
+      text-align: center;
+      font-size: 12px;   /* tamanho ajustado para ficar mais visível */
+      border: none;
+      padding-top: 4px;
+    }
+
+    table { width: 100%; border-collapse: collapse; margin-top: 20px; }
+    th, td { border: 1px solid #ccc; padding: 6px; text-align: left; }
+    th { background: #f2f2f2; }
+
+    .assinatura {
+      margin-top: 60px;
+      text-align: center;
+      font-size: 13px;
+    }
+    .linha-assinatura {
+      margin-top: 40px;
+      border-top: 1px solid #000;
+      width: 250px;
+      margin-left: auto;
+      margin-right: auto;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <img src="{{ request.url_root }}static/img/logo.png" alt="Logo">
+    <h2>Sistema Integrado de Gestão de Igreja (SiGI)</h2>
+    <p>Relatório de Membros</p>
+  </header>
+
+  <footer>
+    Emitido em {{ data_emissao }}
+  </footer>
+
+  <main>
+    <table>
+      <thead>
+        <tr>
+          <th>Nome</th>
+          <th>Sexo</th>
+          <th>Status</th>
+          <th>Estado Civil</th>
+          <th>Função</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for m in membros %}
+        <tr>
+          <td>{{ m.nome }}</td>
+          <td>{{ m.sexo or 'Não informado' }}</td>
+          <td>{{ m.status or 'Não informado' }}</td>
+          <td>{{ m.estado_civil or 'Não informado' }}</td>
+          <td>{{ m.funcao or 'Não informado' }}</td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+
+    <!-- Assinatura aparece só no final do relatório -->
+    <div class="assinatura">
+      <div class="linha-assinatura"></div>
+      <p>Pastor Presidente</p>
+    </div>
+  </main>
+</body>
+</html>

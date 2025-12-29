@@ -1,0 +1,130 @@
+{% extends "base.html" %}
+{% block title %}Membros - SiGI{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+  <!-- Cabeçalho -->
+  <div class="d-flex justify-content-between align-items-center mb-2">
+    <h2><i class="bi bi-people text-primary me-2"></i> Membros</h2>
+    <a href="{{ url_for('member.cadastro_membro') }}" class="btn btn-success">
+      <i class="bi bi-person-plus me-1"></i> Novo Membro
+    </a>
+  </div>
+
+  <!-- Campo de busca -->
+  <form class="d-flex align-items-center mb-2 gap-2" style="max-width: 600px;" method="get" action="{{ url_for('member.buscar_membros') }}">
+    <input name="q" id="searchInput" type="text" class="form-control" 
+           placeholder="Buscar por nome, email ou função">
+    <button class="btn btn-primary d-flex align-items-center" type="submit">
+      <i class="bi bi-search me-1"></i>
+      <span>Buscar</span>
+    </button>
+  </form>
+
+  <div class="table-responsive shadow-sm">
+    <table class="table table-striped table-hover align-middle">
+      <thead class="table-primary">
+        <tr>
+          <th>Foto</th>
+          <th>Nome</th>
+          <th>Email</th>
+          <th>Telefone</th>
+          <th>Batizado</th>
+          <th>Dizimista</th>
+          <th>Status</th>
+          <th>Função</th>
+          <th class="text-center">Ações</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% if membros %}
+          {% for membro in membros %}
+          <tr>
+            <td>
+              {% if membro.foto %}
+                <img src="{{ url_for('static', filename=membro.foto) }}" alt="Foto" class="rounded-circle" width="50" height="50">
+              {% else %}
+                <i class="bi bi-person-circle fs-3 text-secondary"></i>
+              {% endif %}
+            </td>
+            <td>{{ membro.nome }}</td>
+            <td>{{ membro.email or '-' }}</td>
+            <td>{{ membro.telefone or '-' }}</td>
+            <!-- ✅ Agora funciona com booleanos -->
+            <td>
+              {% if membro.batizado %}
+                <span class="badge bg-success">Sim</span>
+              {% else %}
+                <span class="badge bg-danger">Não</span>
+              {% endif %}
+            </td>
+            <td>
+              {% if membro.dizimista %}
+                <span class="badge bg-success">Sim</span>
+              {% else %}
+                <span class="badge bg-danger">Não</span>
+              {% endif %}
+            </td>
+            <td>
+              {% if membro.status == 'Ativo' %}
+                <span class="badge bg-success">Ativo</span>
+              {% elif membro.status == 'Inativo' %}
+                <span class="badge bg-danger">Inativo</span>
+              {% else %}
+                <span class="badge bg-secondary">{{ membro.status or '-' }}</span>
+              {% endif %}
+            </td>
+            <td>{{ membro.funcao }}</td>
+            <td class="text-center">
+              <!-- Botão único de ações -->
+              <div class="btn-group">
+                <button type="button" class="btn btn-sm btn-dark dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
+                  <i class="bi bi-gear"></i> Ações
+                </button>
+                <ul class="dropdown-menu dropdown-menu-end">
+                  <li>
+                    <a class="dropdown-item" href="{{ url_for('member.editar_membro', id=membro.id) }}">
+                      <i class="bi bi-pencil-square me-1 text-primary"></i> Editar & Visualizar
+                    </a>
+                  </li>
+                  <li>
+                    <form method="POST" action="{{ url_for('member.excluir_membro', id=membro.id) }}" onsubmit="return confirm('Excluir este membro?')">
+                      <button type="submit" class="dropdown-item text-danger">
+                        <i class="bi bi-trash me-1"></i> Excluir
+                      </button>
+                    </form>
+                  </li>
+                  <li>
+                    <a class="dropdown-item" href="{{ url_for('member.imprimir_ficha_pdf', id=membro.id) }}" 
+                    	target="_blank"rel="noopener noreferrer">
+                      <i class="bi bi-printer me-1 text-success"></i> Imprimir Ficha
+                    </a>
+                  </li>
+                  <li>
+                    <a class="dropdown-item" href="{{ url_for('member.carteira_membro', id=membro.id) }}">
+                      <i class="bi bi-card-text me-1 text-info"></i> Carteira
+                    </a>
+                  </li>
+                  <li>
+		    <a class="dropdown-item" href="{{ url_for('member.carta_recomendacao', id=membro.id) }}"
+		    	target="_blank" rel="noopener noreferrer">
+		     <i class="bi bi-file-earmark-pdf me-1 text-secondary"></i> Carta de Recomendação (PDF)
+		    </a>
+                  </li>
+                </ul>
+              </div>
+            </td>
+          </tr>
+          {% endfor %}
+        {% else %}
+          <tr>
+            <td colspan="9" class="text-center text-muted">
+              <i class="bi bi-info-circle me-1"></i> Nenhum membro cadastrado.
+            </td>
+          </tr>
+        {% endif %}
+      </tbody>
+    </table>
+  </div>
+</div>
+{% endblock %}

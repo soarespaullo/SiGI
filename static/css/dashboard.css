@@ -1,0 +1,48 @@
+/* ===========================
+   DASHBOARD PAGE
+   =========================== */
+
+/* Header do dashboard (título + bem-vindo) */
+.dashboard-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1.5rem;
+}
+
+/* Cards de estatísticas */
+.dashboard-card {
+  border: none;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+  border-radius: 12px;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.dashboard-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 6px 16px rgba(0,0,0,0.15);
+}
+
+/* Ícones circulares dentro dos cards */
+.dashboard-icon {
+  width: 60px;
+  height: 60px;
+  border-radius: 50%;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 0.75rem;
+}
+
+/* Título pequeno dos cards */
+.dashboard-card h6 {
+  font-size: 0.9rem;
+  color: #6c757d;
+  margin-bottom: 0.25rem;
+}
+
+/* Número grande dos cards */
+.dashboard-card h3 {
+  font-weight: 700;
+  margin: 0;
+}

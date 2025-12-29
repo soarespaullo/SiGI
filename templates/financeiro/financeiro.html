@@ -1,0 +1,140 @@
+{% extends "base.html" %}
+{% block title %}Financeiro{% endblock %}
+{% block content %}
+<div class="container mt-4">
+  <h2 class="mb-4"><i class="bi bi-cash-stack text-success"></i> Financeiro</h2>
+
+  <div class="row g-4">
+    <div class="col-md-3">
+      <a href="{{ url_for('financeiro.entradas') }}" class="text-decoration-none">
+        <div class="card shadow-sm h-100 card-hover">
+          <div class="card-body">
+            <h5 class="card-title text-success"><i class="bi bi-arrow-down-circle"></i> Entradas</h5>
+            <p class="card-text">Registrar receitas: dízimos, ofertas, doações, eventos, aluguéis.</p>
+          </div>
+        </div>
+      </a>
+    </div>
+    <div class="col-md-3">
+      <a href="{{ url_for('financeiro.saidas') }}" class="text-decoration-none">
+        <div class="card shadow-sm h-100 card-hover">
+          <div class="card-body">
+            <h5 class="card-title text-danger"><i class="bi bi-arrow-up-circle"></i> Saídas</h5>
+            <p class="card-text">Registrar despesas: manutenção, consumo, salários, materiais.</p>
+          </div>
+        </div>
+      </a>
+    </div>
+    <div class="col-md-3">
+      <a href="{{ url_for('financeiro.relatorios') }}" class="text-decoration-none">
+        <div class="card shadow-sm h-100 card-hover">
+          <div class="card-body">
+            <h5 class="card-title text-primary"><i class="bi bi-graph-up"></i> Relatórios</h5>
+            <p class="card-text">Filtrar, analisar e exportar CSV.</p>
+          </div>
+        </div>
+      </a>
+    </div>
+    <div class="col-md-3">
+      <a href="{{ url_for('financeiro.comprovantes') }}" class="text-decoration-none">
+        <div class="card shadow-sm h-100 card-hover">
+          <div class="card-body">
+            <h5 class="card-title text-warning"><i class="bi bi-file-earmark-text"></i> Comprovantes</h5>
+            <p class="card-text">Upload e consulta de comprovantes, organizados por mês.</p>
+          </div>
+        </div>
+      </a>
+    </div>
+  </div>
+
+  <div class="row g-4 mt-4">
+    <div class="col-md-4">
+      <div class="card shadow-sm">
+        <div class="card-body">
+          <h6>Total de Entradas</h6>
+          <h3 class="text-success">{{ total_entradas|currency }}</h3>
+        </div>
+      </div>
+    </div>
+    <div class="col-md-4">
+      <div class="card shadow-sm">
+        <div class="card-body">
+          <h6>Total de Saídas</h6>
+          <h3 class="text-danger">{{ total_saidas|currency }}</h3>
+        </div>
+      </div>
+    </div>
+    <div class="col-md-4">
+      <div class="card shadow-sm">
+        <div class="card-body">
+          <h6>Saldo</h6>
+          <h3 class="{{ 'text-success' if saldo >= 0 else 'text-danger' }}">{{ saldo|currency }}</h3>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card shadow-sm mt-4">
+    <div class="card-body">
+      <h5 class="card-title"><i class="bi bi-activity"></i> Evolução Entradas x Saídas</h5>
+      <canvas id="financeChart" height="100"></canvas>
+    </div>
+  </div>
+</div>
+
+<style>
+  .card-hover:hover {
+    transform: translateY(-5px);
+    transition: 0.3s;
+    box-shadow: 0 0.6rem 1rem rgba(0,0,0,.15);
+  }
+</style>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+  const labels = {{ labels|tojson }};
+  const entradasData = {{ entradas_data|tojson }};
+  const saidasData = {{ saidas_data|tojson }};
+  const ctx = document.getElementById('financeChart').getContext('2d');
+  new Chart(ctx, {
+    type: 'line',
+    data: {
+      labels,
+      datasets: [
+        {
+          label: 'Entradas',
+          data: entradasData,
+          borderColor: 'rgba(25,135,84,1)',
+          backgroundColor: 'rgba(25,135,84,0.2)',
+          tension: 0.4, // curva suave
+          fill: false
+        },
+        {
+          label: 'Saídas',
+          data: saidasData,
+          borderColor: 'rgba(220,53,69,1)',
+          backgroundColor: 'rgba(220,53,69,0.2)',
+          tension: 0.4,
+          fill: false
+        }
+      ]
+    },
+    options: {
+      responsive: true,
+      plugins: {
+        legend: { position: 'top' }
+      },
+      scales: {
+        y: {
+          beginAtZero: true,
+          ticks: {
+            callback: function(value) {
+              return 'R$ ' + value.toLocaleString('pt-BR');
+            }
+          }
+        }
+      }
+    }
+  });
+</script>
+{% endblock %}

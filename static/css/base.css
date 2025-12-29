@@ -1,0 +1,130 @@
+/* ===========================
+   LAYOUT GLOBAL
+   =========================== */
+html, body {
+  height: 100%;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+
+/* Área principal ocupa espaço entre header e footer */
+.content-wrap {
+  flex: 1;
+  padding-top: 120px;   /* espaço para não ficar escondido atrás da navbar fixa */
+  padding-bottom: 60px; /* espaço para não colidir com o footer */
+}
+
+/* ===========================
+   NAVBAR MODERNA COM DEGRADÊ
+   =========================== */
+.navbar-top {
+  background: linear-gradient(135deg, #4e73df, #1cc88a);
+  backdrop-filter: blur(6px);
+  padding: 0.5rem 1rem;
+  color: #fff;
+}
+
+.navbar-brand {
+  color: #fff !important;
+  font-weight: 700;
+  font-size: 1.3rem;
+  letter-spacing: 0.5px;
+  text-shadow: 0 2px 4px rgba(0,0,0,0.2);
+}
+
+.navbar-bottom {
+  background: linear-gradient(135deg, #4e73df, #1cc88a);
+  backdrop-filter: blur(6px);
+  box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+}
+
+.navbar-bottom .nav-link {
+  color: #fff !important;
+  font-weight: 500;
+  transition: all 0.3s ease;
+}
+
+.navbar-bottom .nav-link:hover {
+  color: #f8f9fc !important;
+  transform: translateY(-2px);
+}
+
+/* Dropdown menu */
+.navbar-bottom .dropdown-menu {
+  background: rgba(255,255,255,0.95);
+  border-radius: 10px;
+  box-shadow: 0 8px 20px rgba(0,0,0,0.15);
+}
+
+.navbar-bottom .dropdown-item {
+  color: #333;
+  transition: background 0.3s ease, color 0.3s ease;
+}
+
+.navbar-bottom .dropdown-item:hover {
+  background: linear-gradient(135deg, #4e73df, #1cc88a);
+  color: #fff;
+  border-radius: 8px;
+}
+
+/* Botão hamburger */
+.navbar-toggler {
+  border: none;
+  background: rgba(255,255,255,0.2);
+  border-radius: 6px;
+}
+
+.navbar-toggler-icon {
+  filter: invert(1);
+}
+
+/* ===========================
+   FOOTER CENTRALIZADO E PROFISSIONAL
+   =========================== */
+footer {
+  background: #f1f3f5; /* cor neutra */
+  color: #444;
+  padding: 20px 0;
+  font-size: 0.9rem;
+  border-top: 1px solid #ddd;
+  text-align: center;
+}
+
+footer a {
+  color: #444;
+  font-weight: 500;
+  text-decoration: none; /* remove sublinhado */
+  transition: color 0.3s ease;
+}
+
+footer a:hover {
+  color: #000;
+}
+
+/* ===========================
+   RESPONSIVIDADE NAVBAR
+   =========================== */
+@media (max-width: 992px) {
+  .navbar-bottom .nav-link {
+    padding: 0.75rem 1rem;
+  }
+  .navbar-brand {
+    font-size: 1.1rem;
+  }
+}
+
+@media (max-width: 576px) {
+  .navbar-top {
+    text-align: center;
+  }
+  .navbar-brand {
+    display: block;
+    margin: auto;
+  }
+}

@@ -1,0 +1,116 @@
+{% extends "base.html" %}
+{% block title %}Inventário - SiGI{% endblock %}
+{% block content %}
+<div class="container mt-4">
+  <h2><i class="bi bi-clipboard-data text-primary me-2"></i> Inventário</h2>
+  <h4><i class="bi bi-list-check me-2 text-secondary"></i> Detalhamento do inventário</h4>
+
+  <!-- Tabela principal -->
+  <div class="table-responsive shadow-sm mt-3" style="overflow-x:auto;">
+    <table class="table table-striped table-hover align-middle" style="min-width:700px;">
+      <thead class="table-primary">
+        <tr>
+          <th>Descrição</th>
+          <th>Categoria</th>
+          <th>Data Entrada</th>
+          <th>Situação</th>
+          <th class="text-end">Valor (R$)</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% if patrimonios %}
+          {% for item in patrimonios %}
+            <tr>
+              <td>{{ item.descricao }}</td>
+              <td>{{ item.categoria }}</td>
+              <td>{{ item.data_entrada.strftime('%d/%m/%Y') }}</td>
+              <td>
+                {% if item.situacao == 'Ativo' %}
+                  <span class="badge bg-success">Ativo</span>
+                {% elif item.situacao == 'Inativo' %}
+                  <span class="badge bg-danger">Inativo</span>
+                {% else %}
+                  <span class="badge bg-secondary">{{ item.situacao }}</span>
+                {% endif %}
+              </td>
+              <td class="text-end">
+                R$ {{ "{:,.2f}".format(item.valor or 0)
+                      |replace(",", "X")
+                      |replace(".", ",")
+                      |replace("X", ".") }}
+              </td>
+            </tr>
+          {% endfor %}
+        {% else %}
+          <tr>
+            <td colspan="5" class="text-center text-muted">
+              <i class="bi bi-info-circle me-1"></i> Nenhum patrimônio cadastrado.
+            </td>
+          </tr>
+        {% endif %}
+      </tbody>
+      {% if patrimonios %}
+      <tfoot>
+        <tr class="table-info fw-bold">
+          <td colspan="2" class="text-start">
+            <i class="bi bi-cash-stack me-1"></i> Valor total do patrimônio
+          </td>
+          <td colspan="3" class="text-end">
+            R$ {{ "{:,.2f}".format(total)
+                  |replace(",", "X")
+                  |replace(".", ",")
+                  |replace("X", ".") }}
+          </td>
+        </tr>
+      </tfoot>
+      {% endif %}
+    </table>
+  </div>
+
+  {% if patrimonios %}
+  <!-- Distribuição por categoria -->
+  <div class="mt-4">
+    <h4><i class="bi bi-diagram-3 me-2 text-secondary"></i> Distribuição por categoria</h4>
+    <div class="table-responsive" style="overflow-x:auto;">
+      <table class="table table-bordered table-sm align-middle" style="min-width:600px;">
+        <thead class="table-primary">
+          <tr>
+            <th>Categoria</th>
+            <th class="text-center">Quantidade</th>
+            <th class="text-end">Valor Total (R$)</th>
+            <th class="text-end">Percentual</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for cat, dados in categorias.items() %}
+          <tr>
+            <td>{{ cat }}</td>
+            <td class="text-center">
+              <span class="badge bg-info text-dark">{{ dados.qtde }}</span>
+            </td>
+            <td class="text-end">
+              <span class="badge bg-success">
+                R$ {{ "{:,.2f}".format(dados.valor)
+                      |replace(",", "X")
+                      |replace(".", ",")
+                      |replace("X", ".") }}
+              </span>
+            </td>
+            <td class="text-end">
+              {% if total > 0 %}
+                <span class="badge bg-primary">
+                  {{ "%.2f"|format((dados.valor / total) * 100) }}%
+                </span>
+              {% else %}
+                <span class="badge bg-secondary">0%</span>
+              {% endif %}
+            </td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+  {% endif %}
+</div>
+{% endblock %}

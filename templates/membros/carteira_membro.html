@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+  <meta charset="UTF-8">
+  <title>Carteira de Membro</title>
+  <style>
+    @page { size: A4; margin: 20mm; }
+    body {
+      font-family: "Arial", sans-serif;
+      background: #eaeaea;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+    }
+    .carteira {
+      width: 800px;
+      height: 500px;
+      border: 3px solid #1a3c8d;
+      background: #fff;
+      display: flex;
+      flex-direction: row;
+      box-shadow: 0 0 15px rgba(0,0,0,0.4);
+      position: relative;
+    }
+    .faixa-topo {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 60px;
+      background: linear-gradient(to right, #1a3c8d, #f1c40f);
+      color: #fff;
+      text-align: center;
+      line-height: 60px;
+      font-weight: bold;
+      font-size: 18px;
+      letter-spacing: 1px;
+    }
+    .lado-esquerdo, .lado-direito {
+      width: 50%;
+      padding: 80px 20px 20px 20px; /* espaço para faixa */
+      box-sizing: border-box;
+    }
+    .lado-esquerdo {
+      border-right: 2px solid #000;
+    }
+    .campo {
+      font-size: 13px;
+      margin-bottom: 8px;
+    }
+    .campo strong {
+      display: inline-block;
+      width: 130px;
+      color: #1a3c8d;
+    }
+    .versiculo {
+      margin-top: 20px;
+      font-style: italic;
+      font-size: 12px;
+      text-align: center;
+      border-top: 1px solid #ccc;
+      padding-top: 10px;
+      color: #555;
+    }
+    .assinaturas {
+      margin-top: 40px;
+      display: flex;
+      justify-content: space-between;
+      font-size: 12px;
+    }
+    .assinaturas div {
+      text-align: center;
+      width: 45%;
+    }
+    .assinaturas div::before {
+      content: "_________________________";
+      display: block;
+      margin-bottom: 5px;
+    }
+    .legal {
+      margin-top: 30px;
+      font-size: 10px;
+      text-align: justify;
+      background: #f9f9f9;
+      padding: 8px;
+      border-left: 3px solid #1a3c8d;
+    }
+  </style>
+</head>
+<body>
+  <div class="carteira">
+    <div class="faixa-topo">IGREJA DE DEUS MISSIONÁRIA PENTECOSTAL</div>
+
+    <!-- Lado esquerdo -->
+    <div class="lado-esquerdo">
+      <div class="campo"><strong>Carteira Nº:</strong> {{ membro.numero_carteira or '-' }}</div>
+      <div class="campo"><strong>Nome:</strong> {{ membro.nome or '-' }}</div>
+      <div class="campo"><strong>Nacionalidade:</strong> {{ membro.nacionalidade or '-' }}</div>
+      <div class="campo"><strong>Naturalidade:</strong> {{ membro.naturalidade or '-' }}</div>
+      <div class="campo"><strong>Nascimento:</strong> {{ membro.data_nascimento.strftime('%d/%m/%Y') if membro.data_nascimento else '-' }}</div>
+      <div class="campo"><strong>Estado civil:</strong> {{ membro.estado_civil or '-' }}</div>
+      <div class="campo"><strong>RG:</strong> {{ membro.rg or '-' }}</div>
+      <div class="campo"><strong>CPF:</strong> {{ membro.cpf or '-' }}</div>
+      <div class="campo"><strong>Igreja Local:</strong> {{ membro.igreja_local or '-' }}</div>
+
+      <div class="versiculo">"Obedecei a vossos pastores e sujeitai-vos a eles." Hb 13.17</div>
+    </div>
+
+    <!-- Lado direito -->
+    <div class="lado-direito">
+      <div class="campo"><strong>Filiação:</strong> {{ membro.filiacao or '-' }}</div>
+      <div class="campo"><strong>Membro desde:</strong> {{ membro.data_cadastro.strftime('%d/%m/%Y') if membro.data_cadastro else '-' }}</div>
+      <div class="campo"><strong>Batismo:</strong> {{ membro.data_batismo.strftime('%d/%m/%Y') if membro.data_batismo else '-' }}</div>
+      <div class="campo"><strong>Validade:</strong> {{ membro.validade.strftime('%d/%m/%Y') if membro.validade else '-' }}</div>
+      <div class="campo"><strong>Função:</strong> {{ membro.funcao or '-' }}</div>
+
+      <div class="assinaturas">
+        <div>Pastor da igreja</div>
+        <div>Secretário</div>
+      </div>
+
+      <div class="legal">
+        É assegurado o livre exercício dos Cultos Religiosos e garantida, na forma da Lei.<br>
+        É assegurado, nos termos da Lei, a prestação de assistência religiosa nas entidades Civis e Militares de internação coletiva.<br>
+        <em>Art. 5º - Incisos 6 e 7 da Constituição Federal do Brasil</em>
+      </div>
+    </div>
+  </div>
+</body>
+</html>

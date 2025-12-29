@@ -1,0 +1,208 @@
+{% extends "base.html" %}
+{% block title %}Relatório de Membros - SiGI{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+  <h2><i class="bi bi-bar-chart-line text-primary me-2"></i> Relatório de Membros</h2>
+
+  <!-- Filtros -->
+  <div class="card shadow-sm mt-3">
+    <div class="card-body">
+      <form method="GET" action="{{ url_for('member.relatorio_membros') }}" class="row g-3">
+        <div class="col-md-3">
+          <label for="sexo" class="form-label">Sexo</label>
+          <select id="sexo" name="sexo" class="form-select">
+            <option value="">Todos</option>
+            <option value="Masculino">Masculino</option>
+            <option value="Feminino">Feminino</option>
+          </select>
+        </div>
+        <div class="col-md-3">
+          <label for="status" class="form-label">Situação</label>
+          <select id="status" name="status" class="form-select">
+            <option value="">Todas</option>
+            <option value="Ativo">Ativo</option>
+            <option value="Inativo">Inativo</option>
+          </select>
+        </div>
+        <div class="col-md-3">
+          <label for="estado_civil" class="form-label">Estado Civil</label>
+          <select id="estado_civil" name="estado_civil" class="form-select">
+            <option value="">Todos</option>
+            <option value="Solteiro">Solteiro</option>
+            <option value="Casado">Casado</option>
+            <option value="Divorciado">Divorciado</option>
+            <option value="Viúvo">Viúvo</option>
+          </select>
+        </div>
+        <div class="col-md-3">
+          <label for="funcao" class="form-label">Tipo</label>
+          <select id="funcao" name="funcao" class="form-select">
+            <option value="">Todos</option>
+            <option value="Membro">Membro</option>
+            <option value="Diácono">Diácono</option>
+            <option value="Presbítero">Presbítero</option>
+            <option value="Pastor">Pastor</option>
+          </select>
+        </div>
+        <div class="col-12 d-flex justify-content-end mt-3">
+          <button type="submit" class="btn btn-primary me-2">
+            <i class="bi bi-funnel me-1"></i> Filtrar
+          </button>
+	  <button type="button" class="btn btn-danger"
+	 	  onclick="window.open('{{ url_for('member.relatorio_membros_pdf',
+		                                   sexo=request.args.get('sexo'),
+		                                   status=request.args.get('status'),
+		                                   estado_civil=request.args.get('estado_civil'),
+		                                   funcao=request.args.get('funcao')) }}','_blank')">
+	    <i class="bi bi-file-earmark-pdf me-1"></i> Exportar PDF
+	  </button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Gráficos (sem CSS externo; containers com altura fixa) -->
+  <div class="row mt-4">
+    <div class="col-md-6 mb-3">
+      <div class="card shadow-sm">
+        <div class="card-body">
+          <h5 class="card-title">Distribuição por Sexo</h5>
+          <div style="height:220px;"><canvas id="graficoSexo"></canvas></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-md-6 mb-3">
+      <div class="card shadow-sm">
+        <div class="card-body">
+          <h5 class="card-title">Distribuição por Faixa Etária</h5>
+          <div style="height:220px;"><canvas id="graficoIdade"></canvas></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-md-6 mb-3">
+      <div class="card shadow-sm">
+        <div class="card-body">
+          <h5 class="card-title">Distribuição por Situação</h5>
+          <div style="height:220px;"><canvas id="graficoStatus"></canvas></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-md-6 mb-3">
+      <div class="card shadow-sm">
+        <div class="card-body">
+          <h5 class="card-title">Distribuição por Estado Civil</h5>
+          <div style="height:220px;"><canvas id="graficoEstadoCivil"></canvas></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-md-6 mb-3">
+      <div class="card shadow-sm">
+        <div class="card-body">
+          <h5 class="card-title">Distribuição por Tipo</h5>
+          <div style="height:220px;"><canvas id="graficoFuncao"></canvas></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+function exportarPDF() {
+  alert("Exportar para PDF ainda não implementado.");
+}
+
+// Dados vindos da rota
+const distSexo = {{ dist_sexo|tojson }};
+const distStatus = {{ dist_status|tojson }};
+const distEstadoCivil = {{ dist_estado_civil|tojson }};
+const distFuncao = {{ dist_funcao|tojson }};
+const distIdade = {{ dist_idade|tojson }};
+
+// Utilitário: cores
+const cores = ['#36A2EB','#FF6384','#6f42c1','#20c997','#fd7e14','#dc3545','#17a2b8','#4CAF50'];
+
+// Pizza menor (sexo)
+new Chart(document.getElementById('graficoSexo'), {
+  type: 'pie',
+  data: {
+    labels: distSexo.map(item => item[0] || 'Não informado'),
+    datasets: [{ data: distSexo.map(item => item[1]), backgroundColor: cores.slice(0,2) }]
+  },
+  options: {
+    responsive: true,
+    maintainAspectRatio: true,
+    aspectRatio: 1, // quadrado, menor
+    plugins: { legend: { position: 'bottom' } }
+  }
+});
+
+// Barra (idade) — sem forçar proporção no CSS, controlado aqui
+new Chart(document.getElementById('graficoIdade'), {
+  type: 'bar',
+  data: {
+    labels: Object.keys(distIdade),
+    datasets: [{ label: 'Membros', data: Object.values(distIdade), backgroundColor: '#4CAF50' }]
+  },
+  options: {
+    responsive: true,
+    maintainAspectRatio: true,
+    aspectRatio: 2, // mais largo que alto (evita crescer verticalmente)
+    plugins: { legend: { display: false } },
+    scales: { y: { beginAtZero: true, ticks: { precision: 0 } } }
+  }
+});
+
+// Doughnut menor (situação)
+new Chart(document.getElementById('graficoStatus'), {
+  type: 'doughnut',
+  data: {
+    labels: distStatus.map(item => item[0] || 'Não informado'),
+    datasets: [{ data: distStatus.map(item => item[1]), backgroundColor: ['#007bff','#ffc107','#dc3545','#20c997'] }]
+  },
+  options: {
+    responsive: true,
+    maintainAspectRatio: true,
+    aspectRatio: 1,
+    cutout: '60%', // buraco interno menor
+    plugins: { legend: { position: 'bottom' } }
+  }
+});
+
+// Barra (estado civil)
+new Chart(document.getElementById('graficoEstadoCivil'), {
+  type: 'bar',
+  data: {
+    labels: distEstadoCivil.map(item => item[0] || 'Não informado'),
+    datasets: [{ label: 'Membros', data: distEstadoCivil.map(item => item[1]), backgroundColor: '#17a2b8' }]
+  },
+  options: {
+    responsive: true,
+    maintainAspectRatio: true,
+    aspectRatio: 2,
+    plugins: { legend: { display: false } },
+    scales: { y: { beginAtZero: true, ticks: { precision: 0 } } }
+  }
+});
+
+// Pizza menor (tipo)
+new Chart(document.getElementById('graficoFuncao'), {
+  type: 'pie',
+  data: {
+    labels: distFuncao.map(item => item[0] || 'Não informado'),
+    datasets: [{ data: distFuncao.map(item => item[1]), backgroundColor: cores.slice(2,6) }]
+  },
+  options: {
+    responsive: true,
+    maintainAspectRatio: true,
+    aspectRatio: 1,
+    plugins: { legend: { position: 'bottom' } }
+  }
+});
+</script>
+{% endblock %}

@@ -1,0 +1,19 @@
+/* Campos bloqueados ficam com cursor de proibido e fundo cinza */
+#formEditar input[readonly],
+#formEditar textarea[readonly],
+#formEditar select[disabled],
+#formEditar input[disabled] {
+  cursor: not-allowed;        /* mostra o cursor de proibido */
+  background-color: #e9ecef;  /* fundo cinza claro */
+  color: #6c757d;             /* texto mais apagado */
+}
+
+/* Remove qualquer efeito de foco em campos bloqueados */
+#formEditar input[readonly]:focus,
+#formEditar textarea[readonly]:focus,
+#formEditar select[disabled]:focus,
+#formEditar input[disabled]:focus {
+  outline: none !important;     /* remove a borda azul padrão */
+  box-shadow: none !important;  /* remove o brilho do foco */
+  border-color: #ced4da;        /* volta para a cor padrão do Bootstrap */
+}

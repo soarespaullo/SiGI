@@ -1,0 +1,235 @@
+{% extends "base.html" %}
+{% block title %}Cadastro de Membro - SiGI{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+  <h2><i class="bi bi-person-plus text-primary me-2"></i> Cadastro de Membro</h2>
+  <div class="card shadow-sm mt-3">
+    <div class="card-body">
+      <form method="POST" action="{{ url_for('member.cadastro_membro') }}" enctype="multipart/form-data">
+        {{ form.hidden_tag() }}
+
+        <!-- Abas -->
+        <ul class="nav nav-tabs" id="cadastroTabs" role="tablist">
+          <li class="nav-item" role="presentation">
+            <button class="nav-link active" id="dados-tab" data-bs-toggle="tab" data-bs-target="#dados" type="button" role="tab">Dados Pessoais</button>
+          </li>
+          <li class="nav-item" role="presentation">
+            <button class="nav-link" id="endereco-tab" data-bs-toggle="tab" data-bs-target="#endereco" type="button" role="tab">Endereço</button>
+          </li>
+          <li class="nav-item" role="presentation">
+            <button class="nav-link" id="eclesiastico-tab" data-bs-toggle="tab" data-bs-target="#eclesiastico" type="button" role="tab">Eclesiástico</button>
+          </li>
+          <li class="nav-item" role="presentation">
+            <button class="nav-link" id="obs-tab" data-bs-toggle="tab" data-bs-target="#obs" type="button" role="tab">Observações</button>
+          </li>
+        </ul>
+
+        <div class="tab-content mt-3" id="cadastroTabsContent">
+          <!-- Dados Pessoais -->
+          <div class="tab-pane fade show active" id="dados" role="tabpanel">
+            <div class="mb-3">
+              {{ form.foto.label(class="form-label") }}
+              {{ form.foto(class="form-control") }}
+            </div>
+
+            <div class="row">
+              <div class="col-md-6 mb-3">
+                {{ form.nome.label(class="form-label") }}
+                {{ form.nome(class="form-control", placeholder="Digite o nome completo") }}
+              </div>
+              <div class="col-md-3 mb-3">
+                {{ form.data_nascimento.label(class="form-label") }}
+                {{ form.data_nascimento(class="form-control") }}
+              </div>
+              <div class="col-md-3 mb-3">
+                {{ form.sexo.label(class="form-label") }}
+                {{ form.sexo(class="form-select") }}
+              </div>
+            </div>
+
+            <!-- Estado Civil ocupa toda a linha -->
+            <div class="row">
+              <div class="col-md-12 mb-3">
+                {{ form.estado_civil.label(class="form-label") }}
+                {{ form.estado_civil(class="form-select", id="estadoCivil") }}
+              </div>
+            </div>
+            <!-- Linha com Cônjuge, Telefone e Email -->
+            <div class="row">
+              <div class="col-md-4 mb-3" id="conjugeField" style="display:none;">
+                {{ form.conjuge.label(class="form-label") }}
+                {{ form.conjuge(class="form-control", placeholder="Nome do cônjuge") }}
+              </div>
+              <div class="col-md-4 mb-3">
+                {{ form.telefone.label(class="form-label") }}
+                {{ form.telefone(class="form-control", id="telefone", placeholder="(DDD) 99999-9999") }}
+              </div>
+              <div class="col-md-4 mb-3">
+                {{ form.email.label(class="form-label") }}
+                {{ form.email(class="form-control", placeholder="Digite o e-mail") }}
+              </div>
+            </div>
+
+            <!-- RG continua na linha seguinte -->
+            <div class="row">
+              <div class="col-md-4 mb-3">
+                {{ form.rg.label(class="form-label") }}
+                {{ form.rg(class="form-control", id="rg", placeholder="Digite o RG") }}
+              </div>
+              <div class="col-md-4 mb-3">
+                {{ form.cpf.label(class="form-label") }}
+                {{ form.cpf(class="form-control", id="cpf", placeholder="Digite o CPF") }}
+              </div>
+              <div class="col-md-4 mb-3">
+                {{ form.nacionalidade.label(class="form-label") }}
+                {{ form.nacionalidade(class="form-control",  placeholder="Digite a nacionalidade") }}
+              </div>
+            </div>
+
+            <div class="row">
+              <div class="col-md-6 mb-3">
+                {{ form.naturalidade.label(class="form-label") }}
+                {{ form.naturalidade(class="form-control",  placeholder="Digite a naturalidade") }}
+              </div>
+              <div class="col-md-6 mb-3">
+                {{ form.filiacao.label(class="form-label") }}
+                {{ form.filiacao(class="form-control", placeholder="Digite a filiação") }}
+              </div>
+            </div>
+
+            <div class="row">
+              <div class="col-md-6 mb-3">
+                {{ form.pai.label(class="form-label") }}
+                {{ form.pai(class="form-control", placeholder="Nome do pai") }}
+              </div>
+              <div class="col-md-6 mb-3">
+                {{ form.mae.label(class="form-label") }}
+                {{ form.mae(class="form-control", placeholder="Nome da mãe") }}
+              </div>
+            </div>
+          </div>
+
+          <!-- Endereço -->
+          <div class="tab-pane fade" id="endereco" role="tabpanel">
+            <div class="mb-3">
+              {{ form.endereco.label(class="form-label") }}
+              {{ form.endereco(class="form-control", placeholder="Rua, número, cidade, estado") }}
+            </div>
+            <div class="row">
+              <div class="col-md-6 mb-3">
+                {{ form.bairro.label(class="form-label") }}
+                {{ form.bairro(class="form-control", placeholder="Digite o bairro") }}
+              </div>
+              <div class="col-md-6 mb-3">
+                {{ form.cep.label(class="form-label") }}
+                {{ form.cep(class="form-control", id="cep", placeholder="Digite o CEP") }}
+              </div>
+            </div>
+          </div>
+
+          <!-- Eclesiástico -->
+          <div class="tab-pane fade" id="eclesiastico" role="tabpanel">
+            <div class="row">
+              <div class="col-md-4 mb-3">
+                {{ form.batizado.label(class="form-label") }}
+                {{ form.batizado(class="form-select") }}
+              </div>
+              <div class="col-md-4 mb-3">
+                {{ form.dizimista.label(class="form-label") }}
+                {{ form.dizimista(class="form-select") }}
+              </div>
+              <div class="col-md-4 mb-3">
+                {{ form.data_batismo.label(class="form-label") }}
+                {{ form.data_batismo(class="form-control") }}
+              </div>
+            </div>
+
+            <div class="row">
+              <div class="col-md-4 mb-3">
+                {{ form.funcao.label(class="form-label") }}
+                {{ form.funcao(class="form-select") }}
+              </div>
+              <div class="col-md-4 mb-3">
+                {{ form.data_cadastro.label(class="form-label") }}
+                {{ form.data_cadastro(class="form-control") }}
+              </div>
+              <div class="col-md-4 mb-3">
+                {{ form.status.label(class="form-label") }}
+                {{ form.status(class="form-select") }}
+              </div>
+            </div>
+
+            <!-- Novos campos adicionados (mantendo estrutura) -->
+            <div class="row">
+              <div class="col-md-4 mb-3">
+                {{ form.data_conversao.label(class="form-label") }}
+                {{ form.data_conversao(class="form-control") }}
+              </div>
+              <div class="col-md-4 mb-3">
+                {{ form.data_saida.label(class="form-label") }}
+                {{ form.data_saida(class="form-control") }}
+              </div>
+            </div>
+
+            <div class="row">
+              <div class="col-md-4 mb-3">
+                {{ form.numero_carteira.label(class="form-label") }}
+                {{ form.numero_carteira(class="form-control" , placeholder="Número da carteira") }}
+              </div>
+              <div class="col-md-4 mb-3">
+                {{ form.igreja_local.label(class="form-label") }}
+                {{ form.igreja_local(class="form-control" , placeholder="Digite a igreja local") }}
+              </div>
+              <div class="col-md-4 mb-3">
+                {{ form.validade.label(class="form-label") }}
+                {{ form.validade(class="form-control") }}
+              </div>
+            </div>
+          </div>
+
+          <!-- Observações -->
+          <div class="tab-pane fade" id="obs" role="tabpanel">
+            <div class="mb-3 mt-3">
+              {{ form.observacoes.label(class="form-label") }}
+              {{ form.observacoes(class="form-control", rows="3", placeholder="Informações adicionais...") }}
+            </div>
+          </div>
+        </div> <!-- fim das abas -->
+
+        <!-- Botões -->
+        <div class="mt-3">
+          <button type="submit" class="btn btn-success">
+            <i class="bi bi-save me-1"></i> Salvar
+          </button>
+          <a href="{{ url_for('member.listar_membros') }}" class="btn btn-secondary">
+            <i class="bi bi-x-circle me-1"></i> Cancelar
+          </a>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+<!-- JavaScript inline -->
+<!-- jQuery necessário para o jQuery Mask funcionar -->
+<script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+<!-- Plugin de máscara -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.mask/1.14.16/jquery.mask.min.js"></script>
+<script>
+// Mostrar/ocultar campo de cônjuge
+document.getElementById("estadoCivil").addEventListener("change", function() {
+  const field = document.getElementById("conjugeField");
+  if (!field) return;
+  field.style.display = (this.value === "Casado") ? "block" : "none";
+});
+
+// Aplicar máscaras (executa após o DOM e jQuery estarem prontos)
+$(function(){
+  $('#telefone').mask('(00) 00000-0000');
+  $('#cpf').mask('000.000.000-00');
+  $('#rg').mask('00.000.000-0');
+  $('#cep').mask('00000-000');
+});
+</script>
+{% endblock %}

@@ -1,0 +1,15 @@
+/* ===========================
+   GRÁFICOS
+   =========================== */
+
+/* Container dos gráficos */
+.chart-container {
+  position: relative;
+  height: 300px;
+  width: 100%;
+}
+
+/* Ajuste para canvas ocupar bem o espaço */
+canvas {
+  max-width: 100%;
+}

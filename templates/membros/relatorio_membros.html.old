@@ -1,0 +1,181 @@
+{% extends "base.html" %}
+{% block title %}Relatório de Membros - SiGI{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+  <h2><i class="bi bi-bar-chart-line text-primary me-2"></i> Relatório de Membros</h2>
+
+  <!-- Filtros -->
+  <div class="card shadow-sm mt-3">
+    <div class="card-body">
+      <form method="GET" action="{{ url_for('member.relatorio_membros') }}" class="row g-3">
+        <div class="col-md-3">
+          <label for="sexo" class="form-label">Sexo</label>
+          <select id="sexo" name="sexo" class="form-select">
+            <option value="">Todos</option>
+            <option value="Masculino">Masculino</option>
+            <option value="Feminino">Feminino</option>
+          </select>
+        </div>
+        <div class="col-md-3">
+          <label for="status" class="form-label">Situação</label>
+          <select id="status" name="status" class="form-select">
+            <option value="">Todas</option>
+            <option value="Ativo">Ativo</option>
+            <option value="Inativo">Inativo</option>
+          </select>
+        </div>
+        <div class="col-md-3">
+          <label for="estado_civil" class="form-label">Estado Civil</label>
+          <select id="estado_civil" name="estado_civil" class="form-select">
+            <option value="">Todos</option>
+            <option value="Solteiro">Solteiro</option>
+            <option value="Casado">Casado</option>
+            <option value="Divorciado">Divorciado</option>
+            <option value="Viúvo">Viúvo</option>
+          </select>
+        </div>
+        <div class="col-md-3">
+          <label for="funcao" class="form-label">Tipo</label>
+          <select id="funcao" name="funcao" class="form-select">
+            <option value="">Todos</option>
+            <option value="Membro">Membro</option>
+            <option value="Diácono">Diácono</option>
+            <option value="Presbítero">Presbítero</option>
+            <option value="Pastor">Pastor</option>
+          </select>
+        </div>
+        <div class="col-12 d-flex justify-content-end mt-3">
+          <button type="submit" class="btn btn-primary me-2">
+            <i class="bi bi-funnel me-1"></i> Filtrar
+          </button>
+          <button type="button" class="btn btn-danger" onclick="exportarPDF()">
+            <i class="bi bi-file-earmark-pdf me-1"></i> Exportar PDF
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Gráficos -->
+  <div class="row mt-4">
+    <div class="col-md-6 mb-3">
+      <div class="card shadow-sm">
+        <div class="card-body">
+          <h5 class="card-title">Distribuição por Sexo</h5>
+          <canvas id="graficoSexo"></canvas>
+        </div>
+      </div>
+    </div>
+    <div class="col-md-6 mb-3">
+      <div class="card shadow-sm">
+        <div class="card-body">
+          <h5 class="card-title">Distribuição por Faixa Etária</h5>
+          <canvas id="graficoIdade"></canvas>
+        </div>
+      </div>
+    </div>
+    <div class="col-md-6 mb-3">
+      <div class="card shadow-sm">
+        <div class="card-body">
+          <h5 class="card-title">Distribuição por Situação</h5>
+          <canvas id="graficoStatus"></canvas>
+        </div>
+      </div>
+    </div>
+    <div class="col-md-6 mb-3">
+      <div class="card shadow-sm">
+        <div class="card-body">
+          <h5 class="card-title">Distribuição por Estado Civil</h5>
+          <canvas id="graficoEstadoCivil"></canvas>
+        </div>
+      </div>
+    </div>
+    <div class="col-md-12 mb-3">
+      <div class="card shadow-sm">
+        <div class="card-body">
+          <h5 class="card-title">Distribuição por Tipo</h5>
+          <canvas id="graficoFuncao"></canvas>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Scripts -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+function exportarPDF() {
+  alert("Exportar para PDF ainda não implementado.");
+}
+
+// Dados vindos da rota (convertidos para JSON pelo Jinja)
+const distSexo = {{ dist_sexo|tojson }};
+const distStatus = {{ dist_status|tojson }};
+const distEstadoCivil = {{ dist_estado_civil|tojson }};
+const distFuncao = {{ dist_funcao|tojson }};
+const distIdade = {{ dist_idade|tojson }};
+
+// Distribuição por Sexo
+new Chart(document.getElementById('graficoSexo'), {
+  type: 'pie',
+  data: {
+    labels: distSexo.map(item => item[0] || 'Não informado'),
+    datasets: [{
+      data: distSexo.map(item => item[1]),
+      backgroundColor: ['#36A2EB', '#FF6384']
+    }]
+  }
+});
+
+// Distribuição por Faixa Etária
+new Chart(document.getElementById('graficoIdade'), {
+  type: 'bar',
+  data: {
+    labels: Object.keys(distIdade),
+    datasets: [{
+      label: 'Membros',
+      data: Object.values(distIdade),
+      backgroundColor: '#4CAF50'
+    }]
+  }
+});
+
+// Distribuição por Situação
+new Chart(document.getElementById('graficoStatus'), {
+  type: 'doughnut',
+  data: {
+    labels: distStatus.map(item => item[0] || 'Não informado'),
+    datasets: [{
+      data: distStatus.map(item => item[1]),
+      backgroundColor: ['#007bff', '#ffc107']
+    }]
+  }
+});
+
+// Distribuição por Estado Civil
+new Chart(document.getElementById('graficoEstadoCivil'), {
+  type: 'bar',
+  data: {
+    labels: distEstadoCivil.map(item => item[0] || 'Não informado'),
+    datasets: [{
+      label: 'Membros',
+      data: distEstadoCivil.map(item => item[1]),
+      backgroundColor: '#17a2b8'
+    }]
+  }
+});
+
+// Distribuição por Tipo
+new Chart(document.getElementById('graficoFuncao'), {
+  type: 'pie',
+  data: {
+    labels: distFuncao.map(item => item[0] || 'Não informado'),
+    datasets: [{
+      data: distFuncao.map(item => item[1]),
+      backgroundColor: ['#6f42c1', '#20c997', '#fd7e14', '#dc3545']
+    }]
+  }
+});
+</script>
+{% endblock %}

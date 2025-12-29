@@ -1,0 +1,159 @@
+/* ===========================
+   LOGIN PAGE MODERNA
+   =========================== */
+
+/* Reset */
+html, body {
+  height: 100%;
+  margin: 0;
+  padding: 0;
+  font-family: "Segoe UI", Roboto, sans-serif;
+}
+
+/* Ocultar header/footer do base apenas na página de login */
+body.login-page header,
+body.login-page .navbar,
+body.login-page footer {
+  display: none !important;
+}
+
+/* Fundo full screen */
+.login-wrapper {
+  position: fixed;
+  top: 0;
+  left: 0;
+  height: 100vh;
+  width: 100vw;
+  background: linear-gradient(135deg, #4e73df, #1cc88a);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  overflow: hidden; /* remove scroll */
+}
+
+/* Card maior */
+.login-card {
+  background: rgba(255, 255, 255, 0.95);
+  border-radius: 20px;
+  box-shadow: 0 15px 40px rgba(0,0,0,0.3);
+  padding: 60px 50px;
+  max-width: 500px;
+  width: 100%;
+  backdrop-filter: blur(8px);
+  animation: slideUp 0.9s ease;
+}
+
+/* Header */
+.login-header h2 {
+  font-weight: 700;
+  color: #4e73df;
+  margin-bottom: 5px;
+}
+
+.login-header p {
+  margin-bottom: 30px;
+}
+
+/* Inputs */
+.form-control {
+  border-radius: 12px;
+  padding: 16px;        /* campos maiores */
+  font-size: 15px;
+  border: 1px solid #ced4da;
+  transition: all 0.3s ease;
+}
+
+.form-control:focus {
+  border-color: #4e73df;
+  box-shadow: 0 0 0 0.25rem rgba(78,115,223,0.25);
+}
+
+/* Botão */
+.btn-login {
+  background: linear-gradient(135deg, #4e73df, #2e59d9);
+  color: #fff;
+  border: none;
+  border-radius: 12px;
+  font-weight: 600;
+  padding: 16px;        /* botão maior */
+  transition: all 0.3s ease;
+}
+
+.btn-login:hover {
+  background: linear-gradient(135deg, #2e59d9, #224abe);
+  transform: translateY(-3px);
+}
+
+/* Link "Esqueceu a senha?" */
+.forgot-link {
+  color: #4e73df;
+  text-decoration: none;
+  font-size: 0.95rem;
+  transition: color 0.3s ease;
+}
+
+.forgot-link:hover {
+  color: #2e59d9;
+  text-decoration: underline;
+}
+
+/* Animações */
+@keyframes slideUp {
+  from {
+    opacity: 0;
+    transform: translateY(40px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* ===========================
+   RESPONSIVIDADE
+   =========================== */
+@media (max-width: 768px) {
+  .login-card {
+    max-width: 90%;       /* ocupa quase toda a largura no tablet/celular */
+    padding: 40px 30px;   /* menos padding para caber melhor */
+  }
+
+  .login-header h2 {
+    font-size: 1.5rem;
+  }
+
+  .form-control {
+    padding: 14px;
+    font-size: 14px;
+  }
+
+  .btn-login {
+    padding: 14px;
+    font-size: 15px;
+  }
+}
+
+@media (max-width: 480px) {
+  .login-card {
+    max-width: 95%;       /* ocupa quase toda a largura no celular pequeno */
+    padding: 30px 20px;
+  }
+
+  .login-header h2 {
+    font-size: 1.3rem;
+  }
+
+  .login-header p {
+    font-size: 0.9rem;
+  }
+
+  .form-control {
+    padding: 12px;
+    font-size: 13px;
+  }
+
+  .btn-login {
+    padding: 12px;
+    font-size: 14px;
+  }
+}

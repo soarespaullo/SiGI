@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+  <meta charset="utf-8">
+  <title>Ficha Individual do Membro - SiGI</title>
+  <style>
+    @page {
+      size: A4;
+      margin: 2cm;
+    }
+    body { font-family: Arial, sans-serif; font-size: 10.5pt; color: #333; }
+
+    /* Cabeçalho principal */
+    .cabecalho {
+      text-align: center;
+      margin-bottom: 50px; /* desce mais o conteúdo */
+    }
+    .cabecalho img {
+      height: 80px;
+      margin-bottom: 10px;
+    }
+    .cabecalho h1 {
+      font-size: 18pt;
+      margin: 0;
+      text-transform: none; /* mantém maiúsculas/minúsculas normais */
+    }
+    .cabecalho h2 {
+      font-size: 13pt;
+      margin: 8px 0 0 0;
+      font-weight: bold;
+      text-transform: none; /* agora em caixa baixa */
+    }
+
+    h2 { background: #f0f0f0; padding: 4px; font-size: 12pt; margin-top: 15px; }
+    .section { margin-bottom: 12px; }
+    .field { margin: 2px 0; }
+    .field strong { display: inline-block; width: 160px; }
+    .footer { text-align: center; font-size: 9pt; color: #777; position: fixed; bottom: 0; left: 0; right: 0; }
+    .row { display: flex; flex-wrap: wrap; }
+    .col-6 { width: 50%; }
+    .col-4 { width: 33.3%; }
+    .top-bar { display: flex; justify-content: flex-end; margin-bottom: 20px; }
+    .foto { text-align:right; }
+    .foto img { border:2px solid #555; width:120px; height:160px; object-fit: cover; }
+  </style>
+</head>
+<body>
+  <!-- Cabeçalho -->
+  <div class="cabecalho">
+    <img src="{{ request.url_root }}static/img/logo.png" alt="Logo da Igreja">
+    <h1>Sistema Integrado de Gestão de Igreja (SiGI)</h1>
+    <h2>Ficha Individual do Membro</h2>
+  </div>
+
+  <!-- Foto do membro -->
+  <div class="top-bar">
+    <div class="foto">
+      {% if foto_url %}
+        <img src="{{ foto_url }}" alt="Foto do membro">
+      {% else %}
+        <i class="bi bi-person-circle fs-1 text-secondary"></i>
+      {% endif %}
+    </div>
+  </div>
+
+  <!-- Dados pessoais -->
+  <div class="section">
+    <h2>Dados pessoais</h2>
+    <div class="row">
+      <div class="col-6 field"><strong>Nome:</strong> {{ membro.nome }}</div>
+      <div class="col-6 field"><strong>Data de Nascimento:</strong> {{ membro.data_nascimento.strftime('%d/%m/%Y') if membro.data_nascimento else '-' }}</div>
+      <div class="col-6 field"><strong>Email:</strong> {{ membro.email or '-' }}</div>
+      <div class="col-6 field"><strong>Sexo:</strong> {{ membro.sexo or '-' }}</div>
+      <div class="col-6 field"><strong>Estado Civil:</strong> {{ membro.estado_civil or '-' }}</div>
+      <div class="col-6 field"><strong>Cônjuge:</strong> {{ membro.conjuge or '-' }}</div>
+      <div class="col-6 field"><strong>Filiação:</strong> {{ membro.filiacao or '-' }}</div>
+      <div class="col-6 field"><strong>Mãe:</strong> {{ membro.mae or '-' }}</div>
+      <div class="col-6 field"><strong>Pai:</strong> {{ membro.pai or '-' }}</div>
+    </div>
+  </div>
+
+  <!-- Endereço e contato -->
+  <div class="section">
+    <h2>Endereço e contato</h2>
+    <div class="row">
+      <div class="col-6 field"><strong>Nacionalidade:</strong> {{ membro.nacionalidade or '-' }}</div>
+      <div class="col-6 field"><strong>Naturalidade:</strong> {{ membro.naturalidade or '-' }}</div>
+      <div class="col-6 field"><strong>CEP:</strong> {{ membro.cep or '-' }}</div>
+      <div class="col-6 field"><strong>Endereço:</strong> {{ membro.endereco or '-' }}</div>
+      <div class="col-6 field"><strong>Bairro:</strong> {{ membro.bairro or '-' }}</div>
+      <div class="col-6 field"><strong>Telefone Celular:</strong> {{ membro.telefone or '-' }}</div>
+    </div>
+  </div>
+
+  <!-- Eclesiástico -->
+  <div class="section">
+    <h2>Eclesiástico</h2>
+    <div class="row">
+      <div class="col-6 field"><strong>Situação:</strong> {{ membro.funcao or '-' }}</div>
+      <div class="col-6 field"><strong>Status:</strong> {{ membro.status or '-' }}</div>
+      <div class="col-6 field"><strong>Dizimista:</strong> {{ 'Sim' if membro.dizimista else 'Não' }}</div>
+      <div class="col-6 field"><strong>Membro Desde:</strong> {{ membro.data_cadastro.strftime('%d/%m/%Y') if membro.data_cadastro else '-' }}</div>
+      <div class="col-6 field"><strong>Data de Batismo:</strong> {{ membro.data_batismo.strftime('%d/%m/%Y') if membro.data_batismo else '-' }}</div>
+      <div class="col-6 field"><strong>Data de Conversão:</strong> {{ membro.data_conversao.strftime('%d/%m/%Y') if membro.data_conversao else '-' }}</div>
+      <div class="col-6 field"><strong>Data de Saída:</strong> {{ membro.data_saida.strftime('%d/%m/%Y') if membro.data_saida else '-' }}</div>
+    </div>
+  </div>
+
+  <!-- Observações -->
+  <div class="section">
+    <h2>Observações</h2>
+    <p>{{ membro.observacoes or '-' }}</p>
+  </div>
+
+  <!-- Rodapé -->
+  <div class="footer">
+    Emitido em {{ current_date.strftime('%d/%m/%Y') }}
+  </div>
+</body>
+</html>
