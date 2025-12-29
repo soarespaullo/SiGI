@@ -68,6 +68,13 @@ Todas as contribuições devem ser feitas com espírito de serviço, lembrando q
 sudo apt install apache2 libapache2-mod-wsgi-py3 python3-venv python3-pip -y
 sudo apt install libpango-1.0-0 libpangoft2-1.0-0 libcairo2 libgdk-pixbuf2.0-0 libffi-dev shared-mime-info -y
 ```
+- Clonar repositório
+  
+```
+git clone https://github.com/soarespaullo/SiGI.git /var/www/sigi
+
+cd /var/www/sigi
+```
 
 ## 2. Configurar MySQL
 
@@ -122,6 +129,8 @@ from app import app as application
 - Permissões
 
 ```
+sudo chown $USER:$USER /var/www/sigi
+
 sudo chown www-data:www-data /var/www/sigi/.env
 sudo chmod 600 /var/www/sigi/.env
 
