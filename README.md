@@ -188,3 +188,31 @@ ou http://localhost
 ```
 sudo tail -f /var/log/apache2/sigi_error.log
 ```
+
+## 10. Configurar SECRET_KEY
+
+- Gerar chave:
+
+```
+python3 -c "import secrets; print(secrets.token_hex(32))"
+```
+
+- Adicionar no .env:
+
+```
+.env
+SECRET_KEY="sua_chave_gerada"
+```
+
+- Proteger .env:
+
+```
+sudo chown www-data:www-data /var/www/sigi/.env
+sudo chmod 600 /var/www/sigi/.env
+```
+
+- Reiniciar Apache:
+
+```
+sudo systemctl restart apache2
+```
