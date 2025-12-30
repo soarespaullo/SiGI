@@ -103,6 +103,7 @@ No arquivo /var/www/sigi/.env:
 
 ```
 DATABASE_URL="mysql+pymysql://sigi_user:sigi_password@localhost:3306/sigi_db"
+```
 
 ## 4. Configurar ambiente virtual
 
@@ -206,13 +207,16 @@ sudo systemctl restart apache2
 ```
 flask db init
 ```
+
 - Isso cria a pasta migrations/ no projeto.
 
-Criar as migrations a partir dos modelos definidos:
+- Criar as migrations a partir dos modelos definidos:
 
-bash
+```
 flask db migrate -m "Inicializando tabelas"
-Aplicar as migrations no banco de dados:
+```
+
+- Aplicar as migrations no banco de dados:
 
 ```
 flask db upgrade
