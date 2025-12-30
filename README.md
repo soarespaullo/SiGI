@@ -73,7 +73,7 @@ sudo apt install libpango-1.0-0 libpangoft2-1.0-0 libcairo2 libgdk-pixbuf2.0-0 l
 - Clonar repositório:
 
 ```
-sudo git clone https://github.com/soarespaullo/SiGI.git /var/www/sigi
+sudo git clone https://github.com/soarespaullo/SiGI.git /var/www/sigi ; cd /var/www/sigi
 ```
 
 ## 2. Configurar MySQL
