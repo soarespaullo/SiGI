@@ -66,7 +66,7 @@ Todas as contribuições devem ser feitas com espírito de serviço, lembrando q
 
 ```
 sudo apt update
-sudo apt install apache2 libapache2-mod-wsgi-py3 python3-venv python3-pip -y
+sudo apt install apache2 libapache2-mod-wsgi-py3 python3-venv python3-pip mysql-server -y
 sudo apt install libpango-1.0-0 libpangoft2-1.0-0 libcairo2 libgdk-pixbuf2.0-0 libffi-dev shared-mime-info -y
 ```
 
