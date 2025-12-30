@@ -64,15 +64,16 @@ Todas as contribuições devem ser feitas com espírito de serviço, lembrando q
 
 ## 1. Instalar dependências
 
-```sudo apt update
+```
+sudo apt update
 sudo apt install apache2 libapache2-mod-wsgi-py3 python3-venv python3-pip -y
 sudo apt install libpango-1.0-0 libpangoft2-1.0-0 libcairo2 libgdk-pixbuf2.0-0 libffi-dev shared-mime-info -y
 ```
-- Clonar repositório
-  
+
+- Clonar repositório:
+
 ```
 git clone https://github.com/soarespaullo/SiGI.git /var/www/sigi
-
 cd /var/www/sigi
 ```
 
@@ -85,16 +86,23 @@ CREATE USER 'sigi_user'@'localhost' IDENTIFIED BY 'sigi_password';
 GRANT ALL PRIVILEGES ON sigi_db.* TO 'sigi_user'@'localhost';
 FLUSH PRIVILEGES;
 EXIT;
-mysql -u sigi_user -p sigi_db   # testar
 ```
-> (utf8mb4 garante suporte a acentos e emojis)
+
+- Testar conexão:
+
+```
+mysql -u sigi_user -p sigi_db
+```
+
+> ⚠️ utf8mb4 garante suporte a acentos e emojis.
+
 
 ## 3. Ajustar .env
+
 No arquivo /var/www/sigi/.env:
 
 ```
 DATABASE_URL="mysql+pymysql://sigi_user:sigi_password@localhost:3306/sigi_db"
-```
 
 ## 4. Configurar ambiente virtual
 
@@ -106,27 +114,7 @@ source venv/bin/activate
 pip install -r requirements.txt
 ```
 
-## 5. Criar arquivo WSGI
-
-Crie /var/www/sigi/app.wsgi:
-
-```
-python
-import os
-import sys
-
-# Caminho do projeto
-sys.path.insert(0, '/var/www/sigi')
-
-# Carregar variáveis de ambiente do .env
-from dotenv import load_dotenv
-load_dotenv(dotenv_path="/var/www/sigi/.env")
-
-# Importar a aplicação Flask
-from app import app as application
-```
-
-- Permissões
+- Permissões:
 
 ```
 sudo chown $USER:$USER /var/www/sigi
@@ -139,31 +127,12 @@ sudo chown -R www-data:www-data /var/www/sigi/static/uploads
 sudo chmod -R 775 /var/www/sigi/static/uploads
 ```
 
-## 6. Configurar Apache
+## 5. Configurar Apache
 
-Crie /etc/apache2/sites-available/sigi.conf:
+- Criar arquivo de configuração:
 
 ```
-<VirtualHost *:80>
-    ServerName seu_dominio.com
-    ServerAdmin admin@seu_dominio.com
-
-    WSGIDaemonProcess sigi python-home=/var/www/sigi/venv python-path=/var/www/sigi
-    WSGIProcessGroup sigi
-    WSGIScriptAlias / /var/www/sigi/app.wsgi
-
-    <Directory /var/www/sigi>
-        Require all granted
-    </Directory>
-
-    Alias /static /var/www/sigi/static
-    <Directory /var/www/sigi/static>
-        Require all granted
-    </Directory>
-
-    ErrorLog ${APACHE_LOG_DIR}/sigi_error.log
-    CustomLog ${APACHE_LOG_DIR}/sigi_access.log combined
-</VirtualHost>
+sudo mv sig.com /etc/apache2/sites-available/sigi.conf
 ```
 
 - Ativar site e módulos:
@@ -174,22 +143,26 @@ sudo a2enmod wsgi
 sudo systemctl restart apache2
 ```
 
-## 7. Habilitar HTTPS (Certbot)
+## 6. Habilitar HTTPS (Certbot)
 
 ```
 sudo apt install certbot python3-certbot-apache -y
 sudo certbot --apache -d sigi.seudominio.com
 ```
-> Configura automaticamente HTTPS com Let’s Encrypt)
 
-## 8. Testar aplicação
+- 🔒 Configura automaticamente HTTPS com Let’s Encrypt.
+
+## 7. Testar aplicação
 
 - Acesse:
 
 ```
 http://sigi.seudominio.com
+```
+# ou
 
-ou http://localhost
+```
+http://localhost
 ```
 
 - Ver logs:
@@ -198,7 +171,7 @@ ou http://localhost
 sudo tail -f /var/log/apache2/sigi_error.log
 ```
 
-## 10. Configurar SECRET_KEY
+## 8. Configurar SECRET_KEY
 
 - Gerar chave:
 
@@ -209,7 +182,7 @@ python3 -c "import secrets; print(secrets.token_hex(32))"
 - Adicionar no .env:
 
 ```
-.env
+env
 SECRET_KEY="sua_chave_gerada"
 ```
 
@@ -226,16 +199,51 @@ sudo chmod 600 /var/www/sigi/.env
 sudo systemctl restart apache2
 ```
 
-## 11. Migrações (sem db init)
+## 9. Criar e aplicar as migrations
 
-
-- Produção (MySQL): após criar o DB e setar DATABASE_URL
-
-```
-flask db upgrade   # aplica migrations já incluídas
-```
-
-- Desenvolvimento (SQLite):
+- Inicializar o diretório de migrations (se ainda não existir):
 
 ```
-flask db upgrade   # cria sigi.db com tabelas
+flask db init
+```
+- Isso cria a pasta migrations/ no projeto.
+
+Criar as migrations a partir dos modelos definidos:
+
+bash
+flask db migrate -m "Inicializando tabelas"
+Aplicar as migrations no banco de dados:
+
+```
+flask db upgrade
+```
+
+## 🔄 Rollback de migrations (se necessário)
+
+- Voltar uma migration:
+
+```
+flask db downgrade -1
+```
+
+- Voltar para uma versão específica:
+
+```
+flask db downgrade <id_da_migration>
+```
+
+- Resetar completamente (estado inicial, sem tabelas):
+
+```
+flask db downgrade base
+```
+
+- Reaplicar depois de corrigir:
+
+```
+flask db migrate -m "Correção de tabelas"
+```
+
+```
+flask db upgrade
+```
