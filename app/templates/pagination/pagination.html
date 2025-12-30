@@ -1,0 +1,51 @@
+{% if pagination.pages > 1 %}
+<!-- 🔹 Paginação Genérica -->
+<div class="d-flex justify-content-center mt-4">
+  <nav aria-label="Navegação de páginas">
+    <ul class="pagination">
+
+      <!-- Botão Anterior -->
+      <li class="page-item {% if not pagination.has_prev %}disabled{% endif %}">
+        <a class="page-link"
+           href="{% if pagination.has_prev %}{{ url_for(request.endpoint, page=pagination.prev_num, q=termo) }}{% else %}#{% endif %}">
+          Anterior
+        </a>
+      </li>
+
+      <!-- Primeira página -->
+      {% if pagination.page > 3 %}
+        <li class="page-item">
+          <a class="page-link" href="{{ url_for(request.endpoint, page=1, q=termo) }}">1</a>
+        </li>
+        <li class="page-item disabled"><span class="page-link">…</span></li>
+      {% endif %}
+
+      <!-- Páginas próximas da atual -->
+      {% for p in range(pagination.page-2, pagination.page+3) %}
+        {% if p > 0 and p <= pagination.pages %}
+          <li class="page-item {% if p == pagination.page %}active{% endif %}">
+            <a class="page-link" href="{{ url_for(request.endpoint, page=p, q=termo) }}">{{ p }}</a>
+          </li>
+        {% endif %}
+      {% endfor %}
+
+      <!-- Última página -->
+      {% if pagination.page < pagination.pages - 2 %}
+        <li class="page-item disabled"><span class="page-link">…</span></li>
+        <li class="page-item">
+          <a class="page-link" href="{{ url_for(request.endpoint, page=pagination.pages, q=termo) }}">{{ pagination.pages }}</a>
+        </li>
+      {% endif %}
+
+      <!-- Botão Próximo -->
+      <li class="page-item {% if not pagination.has_next %}disabled{% endif %}">
+        <a class="page-link"
+           href="{% if pagination.has_next %}{{ url_for(request.endpoint, page=pagination.next_num, q=termo) }}{% else %}#{% endif %}">
+          Próximo
+        </a>
+      </li>
+
+    </ul>
+  </nav>
+</div>
+{% endif %}
