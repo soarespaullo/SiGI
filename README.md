@@ -119,9 +119,6 @@ pip install -r requirements.txt
 ```
 sudo chown $USER:$USER /var/www/sigi
 
-sudo chown www-data:www-data /var/www/sigi/.env
-sudo chmod 600 /var/www/sigi/.env
-
 sudo mkdir -p /var/www/sigi/app/static/uploads
 sudo chown -R www-data:www-data /var/www/sigi/app/static/uploads
 sudo chmod -R 775 /var/www/sigi/app/static/uploads
