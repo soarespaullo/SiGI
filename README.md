@@ -132,7 +132,7 @@ sudo chmod -R 775 /var/www/sigi/app/static/uploads
 - Criar arquivo de configuração:
 
 ```
-sudo mv sig.com /etc/apache2/sites-available/sigi.conf
+sudo mv sig.conf /etc/apache2/sites-available/sigi.conf
 ```
 
 - Ativar site e módulos:
