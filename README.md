@@ -99,7 +99,7 @@ mysql -u sigi_user -p sigi_db
 
 ## 3. Ajustar .env
 
-No arquivo /var/www/sigi/.env:
+- No arquivo /var/www/sigi/.env:
 
 ```
 DATABASE_URL="mysql+pymysql://sigi_user:sigi_password@localhost:3306/sigi_db"
