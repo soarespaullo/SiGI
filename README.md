@@ -130,7 +130,7 @@ sudo chmod -R 775 /var/www/sigi/app/static/uploads
 
 ## 5. Configurar Apache
 
-- Criar arquivo de configuração:
+- Mova o arquivo de configuração:
 
 ```
 sudo mv sigi.conf /etc/apache2/sites-available/sigi.conf
@@ -154,26 +154,7 @@ sudo certbot --apache -d sigi.seudominio.com
 
 - 🔒 Configura automaticamente HTTPS com Let’s Encrypt.
 
-## 7. Testar aplicação
-
-- Acesse:
-
-```
-http://sigi.seudominio.com
-```
-# ou
-
-```
-http://localhost
-```
-
-- Ver logs:
-
-```
-sudo tail -f /var/log/apache2/sigi_error.log
-```
-
-## 8. Configurar SECRET_KEY
+## 7. Configurar SECRET_KEY
 
 - Gerar chave:
 
@@ -195,13 +176,7 @@ sudo chown www-data:www-data /var/www/sigi/.env
 sudo chmod 600 /var/www/sigi/.env
 ```
 
-- Reiniciar Apache:
-
-```
-sudo systemctl restart apache2
-```
-
-## 9. Criar e aplicar as migrations
+## 8. Criar e aplicar as migrations
 
 - Inicializar o diretório de migrations (se ainda não existir):
 
@@ -227,6 +202,25 @@ flask db upgrade
  
 ```
 sudo systemctl restart apache2
+```
+
+## 9. Testar aplicação
+
+- Acesse:
+
+```
+http://sigi.seudominio.com
+```
+# ou
+
+```
+http://localhost
+```
+
+- Ver logs:
+
+```
+sudo tail -f /var/log/apache2/sigi_error.log
 ```
 
 ## 🔄 Rollback de migrations (se necessário)
