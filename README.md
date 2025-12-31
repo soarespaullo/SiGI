@@ -223,6 +223,12 @@ flask db migrate -m "Inicializando tabelas"
 flask db upgrade
 ```
 
+ - Reiniciar Apache:
+ 
+```
+sudo systemctl restart apache2
+```
+
 ## 🔄 Rollback de migrations (se necessário)
 
 - Voltar uma migration:
