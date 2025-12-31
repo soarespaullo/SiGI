@@ -21,7 +21,7 @@ class Config:
     # -----------------------------
     # 📂 Uploads
     # -----------------------------
-    UPLOAD_FOLDER = os.environ.get('UPLOAD_FOLDER', 'app/static/uploads')
+    UPLOAD_FOLDER = os.environ.get('UPLOAD_FOLDER', '/var/www/sigi/app/static/uploads')
     TEMPLATES_AUTO_RELOAD = True
 
     # -----------------------------
