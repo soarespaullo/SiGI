@@ -113,6 +113,8 @@ DATABASE_URL="mysql+pymysql://sigi_user:sigi_password@localhost:3306/sigi_db"
 - No diretório do projeto:
 
 ```
+sudo chown $USER:$USER /var/www/sigi
+
 python3 -m venv venv
 source venv/bin/activate
 pip install -r requirements.txt
@@ -121,8 +123,6 @@ pip install -r requirements.txt
 - Permissões:
 
 ```
-sudo chown $USER:$USER /var/www/sigi
-
 sudo mkdir -p /var/www/sigi/app/static/uploads
 sudo chown -R www-data:www-data /var/www/sigi/app/static/uploads
 sudo chmod -R 775 /var/www/sigi/app/static/uploads
