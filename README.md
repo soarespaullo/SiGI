@@ -98,6 +98,10 @@ mysql -u sigi_user -p sigi_db
 
 ## 3. Ajustar .env
 
+```
+ sudo mv .env.example .env
+```
+
 - No arquivo /var/www/sigi/.env:
 
 ```
