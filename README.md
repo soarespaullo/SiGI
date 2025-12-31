@@ -140,6 +140,7 @@ sudo mv sigi.conf /etc/apache2/sites-available/sigi.conf
 
 ```
 sudo a2ensite sigi.conf
+sudo a2dissite 000-default.conf 
 sudo a2enmod wsgi
 sudo systemctl restart apache2
 ```
