@@ -8,10 +8,13 @@ class EventoForm(FlaskForm):
     descricao = TextAreaField("Descrição", validators=[Optional(), Length(max=500)])
     
     tipo = SelectField("Tipo", choices=[
-        ("culto", "Culto"),
+        ("culto_especial", "Culto Especial"),
+        ("retiro", "Retiro"),
+        ("batismo", "Batismo"),
         ("reuniao", "Reunião"),
+        ("evangelismo", "Evangelismo"),
         ("conferencia", "Conferência"),
-        ("outro", "Outro")
+        ("outros", "Outros")
     ], validators=[DataRequired()])
     
     data_inicio = DateTimeLocalField(
@@ -30,9 +33,11 @@ class EventoForm(FlaskForm):
     organizador = StringField("Organizador", validators=[Optional(), Length(max=100)])
     
     status = SelectField("Status", choices=[
-        ("ativo", "Ativo"),
-        ("cancelado", "Cancelado"),
-        ("concluido", "Concluído")
+        ("confirmado", "Confirmado"),
+        ("planejado", "Planejado"),
+        ("em_andamento", "Em Andamento"),
+        ("concluido", "Concluído"),
+        ("cancelado", "Cancelado")
     ], validators=[DataRequired()])
     
     submit = SubmitField("Salvar")

@@ -128,3 +128,11 @@ footer a:hover {
     margin: auto;
   }
 }
+
+/* ===========================
+   MODAL CONFIRMAR EXCLUSÃO
+   =========================== */
+.bg-gradient-base {
+  background: linear-gradient(135deg, #4e73df, #1cc88a); 
+  color: #fff; /* texto branco */
+}

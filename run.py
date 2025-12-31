@@ -1,10 +1,8 @@
 import os
 from app import create_app
+from config import get_config   # ✅ importa a função que decide o ambiente
 
-# Decide qual configuração usar
-config_class = "config.ProductionConfig" if os.environ.get("FLASK_ENV") == "production" else "config.DevelopmentConfig"
-
-app = create_app(config_class)
+app = create_app(get_config())
 
 if __name__ == "__main__":
     app.run(debug=app.config["DEBUG"])

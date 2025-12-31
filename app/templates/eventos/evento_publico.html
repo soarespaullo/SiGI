@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>{{ evento.titulo }}</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css">
+  <style>
+    body {
+      background: #f5f5f5;
+      font-family: 'Helvetica Neue', Arial, sans-serif;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 100vh;
+      margin: 0;
+    }
+    .evento-container {
+      max-width: 900px;
+      width: 100%;
+      background: white;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.15);
+      border-radius: 12px;
+      overflow: hidden;
+    }
+    /* 🔹 Banner com degradê igual ao header do sistema */
+    .evento-header {
+      background: linear-gradient(135deg, #4e73df, #1cc88a);
+      color: white;
+      padding: 50px 30px;
+      text-align: center;
+    }
+    .evento-header h1 {
+      margin: 0 0 15px 0;
+      font-size: 36px;
+      font-weight: bold;
+    }
+    .evento-badge {
+      display: inline-block;
+      padding: 6px 18px;
+      background: rgba(255,255,255,0.2);
+      border-radius: 20px;
+      font-size: 15px;
+      margin: 5px;
+    }
+    .status-badge {
+      padding: 8px 16px;
+      border-radius: 20px;
+      font-weight: bold;
+      font-size: 14px;
+      display: inline-block;
+      margin: 5px;
+    }
+    .status-planejado { background: #ffc107; color: #000; }
+    .status-confirmado { background: #28a745; color: #fff; }
+    .status-em_andamento { background: #17a2b8; color: #fff; }
+    .status-concluido { background: #6c757d; color: #fff; }
+    .status-cancelado { background: #dc3545; color: #fff; }
+    .evento-body {
+      padding: 30px;
+    }
+    .evento-descricao {
+      background: #f8f9fa;
+      padding: 20px;
+      border-radius: 8px;
+      margin-bottom: 30px;
+    }
+    .evento-descricao h3 {
+      margin-top: 0;
+      color: #333;
+    }
+    .evento-descricao p {
+      color: #666;
+      line-height: 1.6;
+    }
+    .info-item {
+      padding: 15px 0;
+      border-bottom: 1px solid #eee;
+      display: flex;
+      align-items: flex-start;
+    }
+    .info-item:last-child {
+      border-bottom: none;
+    }
+    .info-icon {
+      color: #4e73df;
+      font-size: 24px;
+      margin-right: 15px;
+      width: 30px;
+    }
+    .info-content h4 {
+      margin: 0 0 5px 0;
+      color: #333;
+      font-size: 14px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+    .info-content p {
+      margin: 0;
+      color: #666;
+      font-size: 16px;
+    }
+  </style>
+</head>
+<body>
+  <div class="evento-container">
+    <!-- Banner centralizado com degradê -->
+    <div class="evento-header">
+      <h1>{{ evento.titulo }}</h1>
+      <div>
+        <!-- Tipo formatado -->
+        <span class="evento-badge">
+          {% if evento.tipo == "culto_especial" %}
+            Culto Especial
+          {% elif evento.tipo == "retiro" %}
+            Retiro
+          {% elif evento.tipo == "batismo" %}
+            Batismo
+          {% elif evento.tipo == "reuniao" %}
+            Reunião
+          {% elif evento.tipo == "evangelismo" %}
+            Evangelismo
+          {% elif evento.tipo == "conferencia" %}
+            Conferência
+          {% elif evento.tipo == "outros" %}
+            Outros
+          {% else %}
+            {{ evento.tipo }}
+          {% endif %}
+        </span>
+        <!-- Status com badge colorido -->
+        <span class="status-badge status-{{ evento.status|lower }}">
+          {% if evento.status == "confirmado" %}
+            Confirmado
+          {% elif evento.status == "planejado" %}
+            Planejado
+          {% elif evento.status == "em_andamento" %}
+            Em Andamento
+          {% elif evento.status == "concluido" %}
+            Concluído
+          {% elif evento.status == "cancelado" %}
+            Cancelado
+          {% else %}
+            {{ evento.status }}
+          {% endif %}
+        </span>
+      </div>
+    </div>
+
+    <!-- Corpo do evento -->
+    <div class="evento-body">
+      <div class="evento-descricao">
+        <h3>Sobre o Evento</h3>
+        <p>{{ evento.descricao }}</p>
+      </div>
+
+      <div class="evento-info">
+        <div class="info-item">
+          <div class="info-icon"><i class="bi bi-calendar-event"></i></div>
+          <div class="info-content">
+            <h4>Data e Hora</h4>
+            <p><strong>Início:</strong> {{ evento.data_inicio.strftime('%d/%m/%Y %H:%M') }}</p>
+            <p><strong>Término:</strong> {{ evento.data_fim.strftime('%d/%m/%Y %H:%M') }}</p>
+          </div>
+        </div>
+
+        <div class="info-item">
+          <div class="info-icon"><i class="bi bi-geo-alt"></i></div>
+          <div class="info-content">
+            <h4>Local</h4>
+            <p>{{ evento.local }}</p>
+          </div>
+        </div>
+
+        <div class="info-item">
+          <div class="info-icon"><i class="bi bi-person"></i></div>
+          <div class="info-content">
+            <h4>Organizador</h4>
+            <p>{{ evento.organizador }}</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Bootstrap Icons -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
+</body>
+</html>

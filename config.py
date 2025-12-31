@@ -5,6 +5,8 @@ from datetime import timedelta
 # Carrega variáveis do .env
 load_dotenv()
 
+BASE_DIR = os.path.abspath(os.path.dirname(__file__))
+
 class Config:
     # -----------------------------
     # 🔒 Segurança
@@ -21,7 +23,7 @@ class Config:
     # -----------------------------
     # 📂 Uploads
     # -----------------------------
-    UPLOAD_FOLDER = os.environ.get('UPLOAD_FOLDER', '/var/www/sigi/app/static/uploads')
+    UPLOAD_FOLDER = os.path.join(BASE_DIR, os.environ.get('UPLOAD_FOLDER', 'app/static/uploads'))
     TEMPLATES_AUTO_RELOAD = True
 
     # -----------------------------
@@ -52,3 +54,12 @@ class DevelopmentConfig(Config):
 
 class ProductionConfig(Config):
     DEBUG = False
+
+# -----------------------------
+# 🌍 Seleção automática de ambiente
+# -----------------------------
+def get_config():
+    env = os.environ.get("FLASK_ENV", "development")
+    if env == "production":
+        return ProductionConfig
+    return DevelopmentConfig

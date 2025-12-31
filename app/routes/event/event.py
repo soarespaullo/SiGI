@@ -1,10 +1,11 @@
-from flask import Blueprint, render_template, redirect, url_for, flash, request
+from flask import Blueprint, render_template, redirect, url_for, flash, request, abort
 from flask_mail import Message
 from datetime import datetime, timedelta
 from app.extensions import db, mail              # ✅ importa db e mail da extensions.py
 from app.models import Evento, Member, User      # ✅ importa models do pacote app.models
 from app.routes.event.forms import EventoForm    # ✅ ajusta para app.routes
 from flask_login import login_required           # 👈 protege rotas com Flask-Login
+
 
 event_bp = Blueprint("event", __name__, url_prefix="/eventos")
 
@@ -41,6 +42,9 @@ def novo_evento():
             organizador=form.organizador.data,
             status=form.status.data
         )
+        # 🔐 Define expiração automática pela data de término
+        evento.token_expira_em = evento.data_fim
+
         db.session.add(evento)
         db.session.commit()
         flash("Evento criado com sucesso!", "success")
@@ -64,6 +68,12 @@ def editar_evento(id):
         evento.local = form.local.data
         evento.organizador = form.organizador.data
         evento.status = form.status.data
+
+        # 🔐 Atualiza expiração do token conforme status
+        if evento.status in ["concluido", "cancelado", "concluído"]:
+            evento.token_expira_em = datetime.utcnow()
+        else:
+            evento.token_expira_em = evento.data_fim
 
         db.session.commit()
         flash("Evento atualizado com sucesso!", "success")
@@ -157,3 +167,18 @@ def enviar_lembretes_eventos():
 
     flash("Lembretes enviados com sucesso!", "success")
     return redirect(url_for("event.listar_eventos"))
+    
+
+# -----------------------------
+# 🌐 Página pública por token
+# -----------------------------
+@event_bp.route("/publico/<string:public_token>", methods=["GET"])
+def evento_publico_token(public_token):
+    evento = Evento.query.filter_by(public_token=public_token).first_or_404()
+
+    # 🔐 Verifica expiração do token
+    if evento.token_expira_em and evento.token_expira_em < datetime.utcnow():
+        # Renderiza página amigável de evento expirado
+        return render_template("eventos/evento_expirado.html", evento=evento), 410
+
+    return render_template("eventos/evento_publico.html", evento=evento)

@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Evento Expirado</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css">
+  <style>
+    body {
+      background: #f5f5f5;
+      font-family: 'Helvetica Neue', Arial, sans-serif;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 100vh;
+      margin: 0;
+    }
+    .expirado-container {
+      max-width: 650px;
+      background: white;
+      box-shadow: 0 6px 25px rgba(0,0,0,0.15);
+      border-radius: 12px;
+      overflow: hidden;
+      text-align: center;
+    }
+    .expirado-header {
+      background: linear-gradient(135deg, #4e73df, #1cc88a);
+      color: white;
+      padding: 40px 20px;
+    }
+    .expirado-header h1 {
+      margin: 0;
+      font-size: 32px;
+      font-weight: bold;
+    }
+    .expirado-body {
+      padding: 35px 25px;
+    }
+    .expirado-body p {
+      color: #555;
+      font-size: 17px;
+      line-height: 1.6;
+      margin-bottom: 15px;
+    }
+    .expirado-body strong {
+      color: #333;
+    }
+  </style>
+</head>
+<body>
+  <div class="expirado-container">
+    <div class="expirado-header">
+      <h1>Evento Expirado</h1>
+    </div>
+    <div class="expirado-body">
+      <p>O evento <strong>{{ evento.titulo }}</strong> não está mais disponível.</p>
+      <p>Este link público expirou porque o evento já foi concluído ou cancelado.</p>
+    </div>
+  </div>
+</body>
+</html>
