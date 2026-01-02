@@ -1,5 +1,5 @@
 {% extends "base.html" %}
-{% block title %}Aniversariantes do Mês - SiGI{% endblock %}
+{% block title %}Aniversariantes - SiGI{% endblock %}
 {% block content %}
 <div class="container mt-4">
 
@@ -8,9 +8,9 @@
     <h2 class="fw-bold">
       <i class="bi bi-gift-fill me-2"></i> 
       Aniversariantes de {{ mes_atual }}
-      {% if aniversariantes %}
+      {% if aniversariantes.items %}
         <span class="badge bg-primary ms-2">
-          {{ aniversariantes|length }} no total 🎉
+          {{ aniversariantes.total }} no total 🎉
         </span>
       {% endif %}
     </h2>
@@ -19,18 +19,78 @@
     </a>
   </div>
 
-  {% if aniversariantes %}
+  <!-- 🔹 Filtros -->
+  <form class="row g-2 mb-3 align-items-end" method="get" action="{{ url_for('member.aniversariantes_mes') }}">
+    <!-- Mês -->
+    <div class="col-md-3">
+      <label for="mes" class="form-label">Mês</label>
+      <select name="mes" id="mes" class="form-select">
+        
+        {% for m in meses %}
+          <option value="{{ loop.index }}" {% if loop.index == mes_selecionado %}selected{% endif %}>
+            {{ m }}
+          </option>
+        {% endfor %}
+      </select>
+    </div>
+
+    <!-- Função -->
+    <div class="col-md-3">
+      <label for="funcao" class="form-label">Função</label>
+      <select name="funcao" id="funcao" class="form-select">
+        <option value="">Todas</option>
+        {% for f in funcoes %}
+          <option value="{{ f }}" {% if funcao_selecionada == f %}selected{% endif %}>{{ f }}</option>
+        {% endfor %}
+      </select>
+    </div>
+
+    <!-- Intervalo de dias -->
+    <div class="col-md-2">
+      <label for="dia_inicio" class="form-label">Dia início</label>
+      <select name="dia_inicio" id="dia_inicio" class="form-select">
+        <option value="">Todos</option>
+        {% for d in range(1, 32) %}
+          <option value="{{ d }}" {% if d == dia_inicio %}selected{% endif %}>{{ d }}</option>
+        {% endfor %}
+      </select>
+    </div>
+    <div class="col-md-2">
+      <label for="dia_fim" class="form-label">Dia fim</label>
+      <select name="dia_fim" id="dia_fim" class="form-select">
+        <option value="">Todos</option>
+        {% for d in range(1, 32) %}
+          <option value="{{ d }}" {% if d == dia_fim %}selected{% endif %}>{{ d }}</option>
+        {% endfor %}
+      </select>
+    </div>
+
+    <!-- Botão de filtro -->
+    <div class="col-md-2 d-flex justify-content-between">
+      <button type="submit" class="btn btn-primary w-100 me-2">
+        <i class="bi bi-filter me-1"></i> Filtrar
+      </button>
+      <!-- Botão de exportar PDF -->
+      <a href="{{ url_for('member.exportar_aniversariantes_pdf', mes=mes_selecionado, funcao=funcao_selecionada, dia_inicio=dia_inicio, dia_fim=dia_fim) }}" 
+         class="btn btn-danger w-100" target="_blank">
+        <i class="bi bi-file-earmark-pdf me-1"></i> PDF
+      </a>
+    </div>
+  </form>
+
+  {% if aniversariantes.items %}
     <div class="row">
-      {% for aniversariante in aniversariantes|sort(attribute='data_nascimento') %}
+      {% for aniversariante in aniversariantes.items %}
         {% set idade = current_year - aniversariante.data_nascimento.year %}
         <div class="col-md-4 col-lg-3 mb-4">
           <div class="card shadow-sm h-100 border-0">
 
-            <!-- Foto -->
+            <!-- Foto com efeito de zoom -->
             {% if aniversariante.foto %}
-              <img src="{{ url_for('static', filename=aniversariante.foto) }}" 
-                   class="card-img-top" alt="Foto de {{ aniversariante.nome }}" 
-                   style="height: 200px; object-fit: cover; border-top-left-radius: .5rem; border-top-right-radius: .5rem;">
+              <div class="card-img-container">
+                <img src="{{ url_for('static', filename=aniversariante.foto) }}" 
+                     class="card-img-top" alt="Foto de {{ aniversariante.nome }}">
+              </div>
             {% else %}
               <div class="d-flex justify-content-center align-items-center bg-light" style="height:200px;">
                 <i class="bi bi-person-circle text-secondary" style="font-size:4rem;"></i>
@@ -52,15 +112,73 @@
                   <span class="badge bg-warning text-dark">Vai completar {{ idade }} anos 👴</span>
                 {% endif %}
               </div>
+              <div class="mt-2">
+                <span class="badge bg-info">{{ aniversariante.funcao }}</span>
+              </div>
             </div>
           </div>
         </div>
       {% endfor %}
     </div>
+
+    <!-- 🔹 Paginação (só aparece se houver mais de uma página) -->
+    {% if aniversariantes.pages > 1 %}
+      <nav aria-label="Page navigation" class="mt-4">
+        <ul class="pagination justify-content-center">
+          {% if aniversariantes.has_prev %}
+            <li class="page-item">
+              <a class="page-link" href="{{ url_for('member.aniversariantes_mes', page=aniversariantes.prev_num, mes=mes_selecionado, funcao=funcao_selecionada, dia_inicio=dia_inicio, dia_fim=dia_fim) }}">Anterior</a>
+            </li>
+          {% else %}
+            <li class="page-item disabled"><span class="page-link">Anterior</span></li>
+          {% endif %}
+
+          {% for p in aniversariantes.iter_pages(left_edge=1, right_edge=1, left_current=2, right_current=2) %}
+            {% if p %}
+              {% if p == aniversariantes.page %}
+                <li class="page-item active"><span class="page-link">{{ p }}</span></li>
+              {% else %}
+                <li class="page-item"><a class="page-link" href="{{ url_for('member.aniversariantes_mes', page=p, mes=mes_selecionado, funcao=funcao_selecionada, dia_inicio=dia_inicio, dia_fim=dia_fim) }}">{{ p }}</a></li>
+              {% endif %}
+            {% else %}
+              <li class="page-item disabled"><span class="page-link">…</span></li>
+            {% endif %}
+          {% endfor %}
+
+          {% if aniversariantes.has_next %}
+            <li class="page-item">
+              <a class="page-link" href="{{ url_for('member.aniversariantes_mes', page=aniversariantes.next_num, mes=mes_selecionado, funcao=funcao_selecionada, dia_inicio=dia_inicio, dia_fim=dia_fim) }}">Próximo</a>
+            </li>
+          {% else %}
+            <li class="page-item disabled"><span class="page-link">Próximo</span></li>
+          {% endif %}
+        </ul>
+      </nav>
+    {% endif %}
   {% else %}
     <div class="alert alert-info text-center shadow-sm mt-4">
-      <i class="bi bi-info-circle me-1"></i> Nenhum aniversariante este mês
+      <i class="bi bi-info-circle me-1"></i> Nenhum aniversariante neste período
     </div>
   {% endif %}
 </div>
+
+<!-- 🔹 CSS extra para efeito de zoom -->
+<style>
+  .card-img-container {
+    overflow: hidden;
+    height: 200px;
+    border-top-left-radius: .5rem;
+    border-top-right-radius: .5rem;
+  }
+  .card-img-container img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: top;
+    transition: transform 0.4s ease;
+  }
+  .card-img-container img:hover {
+    transform: scale(1.1); /* 🔹 efeito de zoom elegante */
+  }
+</style>
 {% endblock %}

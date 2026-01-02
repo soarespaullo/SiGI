@@ -1,4 +1,6 @@
 from app.extensions import db   # ✅ importa o db único centralizado em app/extensions.py
+import secrets
+from datetime import datetime
 
 # -----------------------------
 # 👥 Membros da Igreja
@@ -52,3 +54,23 @@ class Member(db.Model):
 
     def __repr__(self):
         return f"<Member {self.nome}>"
+
+# -----------------------------
+# 🔗 Links Públicos (ex: cadastro de visitantes)
+# -----------------------------
+class PublicLink(db.Model):
+    __tablename__ = "public_links"
+
+    id = db.Column(db.Integer, primary_key=True)
+    tipo = db.Column(db.String(50))  # ex: "visitante"
+    hash = db.Column(db.String(64), unique=True, nullable=False)
+    ativo = db.Column(db.Boolean, default=True)
+    data_criacao = db.Column(db.DateTime, default=datetime.utcnow)
+
+    @staticmethod
+    def gerar_hash():
+        # Gera uma string hex segura de 32 caracteres
+        return secrets.token_hex(16)
+
+    def __repr__(self):
+        return f"<PublicLink {self.tipo} - {self.hash}>"

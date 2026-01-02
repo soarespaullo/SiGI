@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Cadastro de Visitante - Igreja</title>
+
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@3.4.1/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Font Awesome -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet">
+
+    <style>
+        body {
+            background: linear-gradient(135deg, #4e73df, #1cc88a);
+            min-height: 100vh;
+            padding: 30px 0;
+        }
+        .card {
+            background: #fff;
+            border-radius: 15px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+            padding: 30px;
+            margin-bottom: 30px;
+        }
+        .card-header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        .card-header h2 {
+            color: #333;
+            margin-bottom: 10px;
+        }
+        .card-header p {
+            color: #666;
+        }
+        .igreja-nome {
+            color: #1cc88a;
+            font-weight: bold;
+        }
+        .form-group label {
+            color: #555;
+            font-weight: 600;
+        }
+        .required:after {
+            content: " *";
+            color: #e74c3c;
+        }
+        .btn-cadastrar {
+            background: linear-gradient(135deg, #4e73df, #1cc88a);
+            border: none;
+            padding: 12px 40px;
+            font-size: 16px;
+            border-radius: 25px;
+            color: #fff;
+            width: 100%;
+            margin-top: 20px;
+        }
+        .btn-cadastrar:hover {
+            background: linear-gradient(135deg, #3b5cc4, #17a673);
+            color: #fff;
+        }
+        .section-title {
+            border-bottom: 2px solid #eee;
+            padding-bottom: 10px;
+            margin: 25px 0 20px 0;
+            color: #333;
+        }
+        .footer-text {
+            text-align: center;
+            color: rgba(255, 255, 255, 0.8);
+            margin-top: 20px;
+            font-size: 13px;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <div class="row">
+            <div class="col-md-8 col-md-offset-2 col-lg-6 col-lg-offset-3">
+
+                <div class="card">
+                    <div class="card-header">
+                        <h2><i class="fa fa-user-plus"></i> Cadastro de Visitante</h2>
+                        <p>Seja bem-vindo(a) à <span class="igreja-nome">SiGI</span>!</p>
+                        <p>Preencha seus dados para nos conhecermos melhor.</p>
+                    </div>
+
+                    <form method="post">
+                        {{ form.hidden_tag() }}
+                        <!-- Dados Básicos -->
+                        <h4 class="section-title"><i class="fa fa-user"></i> Dados Básicos</h4>
+                        <div class="form-group">
+                            <label class="required">Nome Completo</label>
+                            <input type="text" class="form-control" name="nome" required placeholder="Digite seu nome completo">
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label class="required">Telefone/WhatsApp</label>
+                                    <input type="tel" class="form-control" name="telefone" required placeholder="(00) 00000-0000">
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label>E-mail</label>
+                                    <input type="email" class="form-control" name="email" placeholder="seu@email.com">
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    <label>Data de Nascimento</label>
+                                    <input type="date" class="form-control" name="data_nascimento">
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    <label>Sexo</label>
+                                    <select class="form-control" name="sexo">
+                                        <option value="">Selecione...</option>
+                                        <option value="Masculino">Masculino</option>
+                                        <option value="Feminino">Feminino</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    <label>Estado Civil</label>
+                                    <select class="form-control" name="estado_civil" id="estado_civil">
+                                        <option value="">Selecione...</option>
+                                        <option value="Solteiro">Solteiro(a)</option>
+                                        <option value="Casado">Casado(a)</option>
+                                        <option value="Divorciado">Divorciado(a)</option>
+                                        <option value="Viúvo">Viúvo(a)</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="form-group" id="conjuge-box" style="display:none;">
+                            <label>Nome do Cônjuge</label>
+                            <input type="text" class="form-control" name="conjuge">
+                        </div>
+
+                        <div class="form-group">
+                            <label>Você frequenta outra igreja?</label>
+                            <select class="form-control" name="frequenta">
+                                <option value="primeira_vez">Não, é minha primeira vez em uma igreja evangélica</option>
+                                <option value="outra_igreja">Sim, sou de outra igreja evangélica (visitante)</option>
+                            </select>
+                        </div>
+
+                        <h4 class="section-title"><i class="fa fa-map-marker"></i> Endereço <small>(opcional)</small></h4>
+
+                        <div class="form-group">
+                            <label>Endereço</label>
+                            <input type="text" class="form-control" name="endereco" placeholder="Rua, número, complemento">
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label>Bairro</label>
+                                    <input type="text" class="form-control" name="bairro">
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label>Naturalidade</label>
+                                    <input type="text" class="form-control" name="naturalidade">
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    <label>CEP</label>
+                                    <input type="text" class="form-control" name="cep" placeholder="00000-000">
+                                </div>
+                            </div>
+                        </div>
+                        <h4 class="section-title"><i class="fa fa-comment"></i> Observações <small>(opcional)</small></h4>
+
+                        <div class="form-group">
+                            <label>Pedidos de oração ou observações</label>
+                            <textarea class="form-control" name="observacoes" rows="3" placeholder="Deixe aqui seus pedidos de oração ou alguma observação..."></textarea>
+                        </div>
+
+                        <!-- Botão Finalizar -->
+                        <button type="submit" class="btn btn-cadastrar">
+                            <i class="fa fa-check"></i> Finalizar Cadastro
+                        </button>
+                    </form>
+                </div>
+
+                <p class="footer-text">
+                    <i class="fa fa-lock"></i> Seus dados estão seguros e serão usados apenas pela igreja.
+                </p>
+            </div>
+        </div>
+    </div>
+
+    <!-- jQuery -->
+    <script src="https://code.jquery.com/jquery-1.12.4.min.js"></script>
+    <!-- Bootstrap JavaScript -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@3.4.1/dist/js/bootstrap.min.js"></script>
+
+    <script>
+        // Mostrar campo do cônjuge quando Estado Civil = Casado
+        document.getElementById("estado_civil").addEventListener("change", function () {
+            var conjugeBox = document.getElementById("conjuge-box");
+            if (this.value === "Casado") {
+                conjugeBox.style.display = "block";
+            } else {
+                conjugeBox.style.display = "none";
+            }
+        });
+
+        // Máscara para telefone
+        document.querySelector('input[name="telefone"]').addEventListener('input', function (e) {
+            var x = e.target.value.replace(/\D/g, '').match(/(\d{0,2})(\d{0,5})(\d{0,4})/);
+            e.target.value = !x[2] ? x[1] : '(' + x[1] + ') ' + x[2] + (x[3] ? '-' + x[3] : '');
+        });
+
+        // Máscara para CEP
+        document.querySelector('input[name="cep"]').addEventListener('input', function (e) {
+            var x = e.target.value.replace(/\D/g, '').match(/(\d{0,5})(\d{0,3})/);
+            e.target.value = !x[2] ? x[1] : x[1] + '-' + x[2];
+        });
+    </script>
+</body>
+</html>

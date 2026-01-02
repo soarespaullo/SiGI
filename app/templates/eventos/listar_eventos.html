@@ -104,14 +104,18 @@
                       Tem certeza que deseja excluir o evento <strong>{{ evento.titulo }}</strong>?<br>
                       Esta ação não poderá ser desfeita.
                     </div>
-                    <div class="modal-footer">
-                      <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
-                      <form method="POST" action="{{ url_for('event.excluir_evento', id=evento.id) }}" style="display:inline;">
-                        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
-                        <button type="submit" class="btn btn-danger">Excluir</button>
-                      </form>
-                    </div>
-                  </div>
+		<div class="modal-footer">
+		  <form method="POST" action="{{ url_for('event.excluir_evento', id=evento.id) }}" style="display:inline;">
+		      <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+		      <button type="submit" class="btn btn-danger">
+		        <i class="bi bi-trash me-1"></i> Excluir
+		      </button>
+		    </form>
+		    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+		      <i class="bi bi-x-circle me-1"></i> Cancelar
+		    </button>
+		  </div>
+                </div>
                 </div>
               </div>
             </td>

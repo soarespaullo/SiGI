@@ -1,33 +1,56 @@
-from flask import Blueprint, render_template, redirect, url_for, flash, request, current_app, make_response, Response
-from app.extensions import db                   # ✅ importa db da extensions.py
-from app.models import Member                   # ✅ importa Member do pacote app.models
-from app.routes.member.forms import MemberForm  # ✅ ajusta para app.routes
 import os
-import weasyprint 
+from datetime import datetime, date
+from collections import Counter
+
+from flask import (
+    Blueprint, render_template, request, redirect, url_for,
+    flash, current_app, make_response, Response
+)
+from flask_login import login_required
 from werkzeug.utils import secure_filename
 from werkzeug.datastructures import CombinedMultiDict
 from sqlalchemy import func
-from datetime import datetime, date
 from weasyprint import HTML  # ➕ para gerar PDF
-from collections import Counter
+
 from utils.pagination import paginate_query
-from flask_login import login_required          # 👈 protege rotas com Flask-Login
+from app.models import Member, PublicLink   # 👈 importa os modelos
+from app.routes.member.forms import MemberForm   # 👈 importa o formulário do lugar certo
+from app.extensions import db
+
 
 member_bp = Blueprint('member', __name__, url_prefix="/membros")
 
 # -----------------------------
-# 📋 Listagem de Membros com Paginação
+# 📋 Listagem de Membros com Paginação (ajustada para link visitante)
 # -----------------------------
 @member_bp.route("/", methods=["GET"])
 @login_required   # 👈 protege a rota
 def listar_membros():
-    # pega o número da página da query string (?page=2)
     page = request.args.get("page", 1, type=int)
+    termo = request.args.get("q", "")   # 🔹 captura termo de busca
 
-    # paginação com ordenação
     membros = Member.query.order_by(Member.nome.asc()).paginate(page=page, per_page=10)
 
-    return render_template("membros/listar_membros.html", membros=membros)
+    # 🔹 Busca o último link de visitante ativo
+    visitante_link = PublicLink.query.filter_by(tipo="visitante", ativo=True).order_by(PublicLink.data_criacao.desc()).first()
+
+    # Se não existir, cria um novo
+    if not visitante_link:
+        novo_hash = PublicLink.gerar_hash()
+        visitante_link = PublicLink(tipo="visitante", hash=novo_hash)
+        db.session.add(visitante_link)
+        db.session.commit()
+
+    # Monta a URL pública
+    visitante_link_url = url_for("member.cadastro_visitante", hash=visitante_link.hash, _external=True)
+
+    return render_template(
+        "membros/listar_membros.html",
+        membros=membros,
+        visitante_link_url=visitante_link_url,
+        termo=termo   # 🔹 passa termo para o template
+    )
+
 
 # -----------------------------
 # 🔍 Buscar Membros
@@ -49,7 +72,6 @@ def buscar_membros():
     query = query.order_by(Member.nome.asc())
     membros = query.paginate(page=page, per_page=10)
 
-    # 🔹 Só mostra mensagem se realmente houve busca (termo preenchido)
     if termo:
         if membros.total == 0:
             flash("Nenhum membro encontrado", "warning")
@@ -68,7 +90,6 @@ def buscar_membros():
 def cadastro_membro():
     form = MemberForm(CombinedMultiDict([request.form, request.files]))
     if request.method == "POST" and form.validate_on_submit():
-        # 🔒 Validação de duplicidade corrigida
         existente = None
         if form.cpf.data:
             existente = Member.query.filter(Member.cpf == form.cpf.data).first()
@@ -195,8 +216,6 @@ def editar_membro(id):
 # -----------------------------
 # ❌ Exclusão de Membros
 # -----------------------------
-from flask_login import login_required   # 👈 protege rotas com Flask-Login
-
 @member_bp.route("/excluir/<int:id>", methods=["POST"])
 @login_required   # 👈 protege a rota
 def excluir_membro(id):
@@ -206,25 +225,57 @@ def excluir_membro(id):
     flash("Membro excluído com sucesso!", "info")
     return redirect(url_for("member.listar_membros"))
 
+
 # -----------------------------
 # 🎂 Aniversariantes do Mês
 # -----------------------------
 @member_bp.route("/aniversariantes", methods=["GET"])
-@login_required   # 👈 protege a rota
+@login_required
 def aniversariantes_mes():
-    mes_atual = datetime.now().month
-    aniversariantes = (
-        Member.query
-        .filter(func.extract('month', Member.data_nascimento) == mes_atual)
-        .order_by(func.extract('day', Member.data_nascimento))
-        .all()
-    )
+    # Captura filtros
+    mes = request.args.get("mes", type=int)
+    funcao = request.args.get("funcao")
+    dia_inicio = request.args.get("dia_inicio", type=int)
+    dia_fim = request.args.get("dia_fim", type=int)
+    page = request.args.get("page", 1, type=int)
+
+    # Se não passar mês, usa o mês atual
+    if not mes:
+        mes = datetime.now().month
+
+    # Query base
+    query = Member.query.filter(Member.data_nascimento.isnot(None))
+    query = query.filter(func.extract('month', Member.data_nascimento) == mes)
+
+    if funcao:
+        query = query.filter(Member.funcao == funcao)
+    if dia_inicio and dia_fim:
+        query = query.filter(func.extract('day', Member.data_nascimento).between(dia_inicio, dia_fim))
+
+    # 🔹 Paginação: ajuste o parâmetro `per_page` para definir quantos membros aparecem por página.
+    # Exemplo: per_page=12 → só aparece paginação se houver mais de 12 membros.
+    aniversariantes = query.order_by(func.extract('day', Member.data_nascimento)).paginate(page=page, per_page=12)
+
+    meses = [
+        "Janeiro","Fevereiro","Março","Abril","Maio","Junho",
+        "Julho","Agosto","Setembro","Outubro","Novembro","Dezembro"
+    ]
+
+    funcoes = [f[0] for f in db.session.query(Member.funcao).distinct().all()]
 
     return render_template(
         "membros/aniversariantes_mes.html",
         aniversariantes=aniversariantes,
-        mes_atual=mes_atual
+        meses=meses,
+        mes_atual=meses[mes - 1],
+        mes_selecionado=mes,
+        funcoes=funcoes,
+        funcao_selecionada=funcao,
+        dia_inicio=dia_inicio,
+        dia_fim=dia_fim,
+        current_year=datetime.now().year
     )
+
 
 # -----------------------------
 # 🪪 Carteira de Membro (HTML)
@@ -236,7 +287,7 @@ def carteira_membro(id):
     return render_template("membros/carteira_modelo.html", membro=membro)
 
 # -----------------------------
-# 📄 Carta de Recomendação (HTML)
+# 📄 Carta de Recomendação (HTML + PDF)
 # -----------------------------
 @member_bp.route("/carta_recomendacao/<int:id>", methods=["GET"])
 @login_required   # 👈 protege a rota
@@ -392,11 +443,157 @@ def relatorio_membros_pdf():
         funcao=funcao,
         data_emissao=date.today().strftime("%d/%m/%Y")
     )
-
-    pdf = weasyprint.HTML(string=html).write_pdf()
+    # Gera o PDF com WeasyPrint
+    pdf = HTML(string=html).write_pdf()
 
     return Response(
         pdf,
         mimetype="application/pdf",
         headers={"Content-Disposition": "inline; filename=relatorio_membros.pdf"}
     )
+
+# -----------------------------
+# 🌐 Cadastro público de visitante
+# -----------------------------
+from sqlalchemy import or_, and_
+
+@member_bp.route("/cadastro-visitante/<hash>", methods=["GET", "POST"])
+def cadastro_visitante(hash):
+    # ✅ valida se a hash existe e está ativa para tipo "visitante"
+    link = PublicLink.query.filter_by(hash=hash, ativo=True, tipo="visitante").first_or_404()
+
+    form = MemberForm()  # 👈 instancia o FlaskForm
+
+    if request.method == "POST":
+        nome = request.form.get("nome")
+        telefone = request.form.get("telefone")
+        email = request.form.get("email")
+        data_nascimento_str = request.form.get("data_nascimento")
+        sexo = request.form.get("sexo")
+        estado_civil = request.form.get("estado_civil")
+        conjuge = request.form.get("conjuge") if estado_civil == "Casado" else None
+        frequenta = request.form.get("frequenta")
+        endereco = request.form.get("endereco")
+        bairro = request.form.get("bairro")
+        naturalidade = request.form.get("naturalidade")   # 👈 ainda pega do form
+        cep = request.form.get("cep")
+        observacoes = request.form.get("observacoes")
+
+        # 🔒 Converte data de nascimento para objeto date (compatível MySQL/SQLite)
+        data_nascimento = None
+        if data_nascimento_str:
+            try:
+                data_nascimento = datetime.strptime(data_nascimento_str, "%Y-%m-%d").date()
+            except ValueError:
+                data_nascimento = None
+
+        # 🔒 Validação obrigatória
+        if not nome or not telefone:
+            flash("Nome e Telefone são obrigatórios!", "danger")
+            return redirect(url_for("member.cadastro_visitante", hash=hash))
+
+        # 🚫 Verifica duplicidade (mesmo nome+telefone OU mesmo email)
+        conditions = [
+            and_(Member.nome == nome, Member.telefone == telefone)
+        ]
+        if email:  # só verifica email se informado
+            conditions.append(Member.email == email)
+
+        existente = Member.query.filter(or_(*conditions)).first()
+
+        if existente:
+            flash("Este visitante já está cadastrado no sistema!", "warning")
+            return redirect(url_for("member.cadastro_visitante", hash=hash))
+
+        # ✅ Se não existe, cria novo visitante
+        visitante = Member(
+            nome=nome,
+            telefone=telefone,
+            email=email,
+            data_nascimento=data_nascimento,
+            sexo=sexo,
+            estado_civil=estado_civil,
+            conjuge=conjuge,
+            endereco=endereco,
+            bairro=bairro,
+            naturalidade=naturalidade,  # 👈 ajuste: salva em naturalidade
+            cep=cep,
+            observacoes=observacoes,
+            funcao="Visitante",          # 👈 marca como visitante
+            status="Ativo",              # 👈 status padrão
+            data_cadastro=datetime.utcnow()
+        )
+        db.session.add(visitante)
+        db.session.commit()
+
+        # 👉 após cadastrar, renderiza a tela de sucesso
+        return render_template("membros/success.html", visitante=visitante, hash=hash)
+
+    # ✅ se GET, renderiza o formulário estilizado e passa o form + hash
+    return render_template("membros/cadastro_visitante.html", form=form, hash=hash)
+    
+    
+# -----------------------------
+# 📄 Relatório em PDF de Aniversariantes
+# -----------------------------
+@member_bp.route("/membros/aniversariantes/pdf", methods=["GET"])
+@login_required
+def exportar_aniversariantes_pdf():
+    # 🔹 Captura filtros da URL
+    mes = request.args.get("mes", type=int)
+    funcao = request.args.get("funcao")
+    dia_inicio = request.args.get("dia_inicio", type=int)
+    dia_fim = request.args.get("dia_fim", type=int)
+
+    # 🔹 Se não for passado mês, usa o mês atual
+    if not mes:
+        mes = datetime.now().month
+
+    # 🔹 Filtros diretos
+    query = Member.query.filter(Member.data_nascimento.isnot(None))
+    query = query.filter(func.extract('month', Member.data_nascimento) == mes)
+
+    if funcao:
+        query = query.filter(Member.funcao == funcao)
+    if dia_inicio and dia_fim:
+        query = query.filter(
+            func.extract('day', Member.data_nascimento).between(dia_inicio, dia_fim)
+        )
+
+    aniversariantes = query.order_by(Member.data_nascimento).all()
+
+    # 🔹 Data de emissão (somente dia/mês/ano)
+    data_emissao = datetime.now().strftime("%d/%m/%Y")
+
+    # 🔹 Renderiza template PDF
+    html = render_template(
+        "membros/aniversariantes_pdf.html",
+        aniversariantes=aniversariantes,
+        current_year=datetime.now().year,
+        data_emissao=data_emissao
+    )
+
+    pdf = HTML(string=html).write_pdf()
+    response = make_response(pdf)
+    response.headers["Content-Type"] = "application/pdf"
+    response.headers["Content-Disposition"] = "inline; filename=aniversariantes.pdf"
+    return response
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    

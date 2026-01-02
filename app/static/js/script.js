@@ -1,4 +1,4 @@
-// PÁGINA DE EDITAR MEMBROS...
+// SCRIPT - PÁGINA DE EDITAR MEMBROS...
 
 // Mostrar/ocultar campo de cônjuge
 document.getElementById("estadoCivil").addEventListener("change", function() {
@@ -36,3 +36,4 @@ $(document).ready(function(){
   $('#rg').mask('00.000.000-0');
   $('#cep').mask('00000-000');
 });
+

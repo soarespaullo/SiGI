@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <title>Relatório de Aniversariantes</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      font-size: 12pt;
+      margin: 20px;
+    }
+    h2 {
+      text-align: center;
+      margin-bottom: 20px;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 10px;
+    }
+    th, td {
+      border: 1px solid #ccc;
+      padding: 6px;
+      text-align: center;
+    }
+    th {
+      background-color: #f2f2f2;
+    }
+    .footer {
+      position: fixed;       /* fixa no rodapé */
+      bottom: -20px;         /* empurra mais para baixo (ajuste conforme necessário) */
+      left: 0;
+      width: 100%;           /* ocupa toda a largura */
+      text-align: center;    /* centraliza o texto */
+      font-size: 10pt;
+      color: #555;
+    }
+  </style>
+</head>
+<body>
+  <!-- Título -->
+  <h2>🎂 Relatório de Aniversariantes</h2>
+
+  <!-- Tabela -->
+  <table>
+    <thead>
+      <tr>
+        <th>Nome</th>
+        <th>Data de Nascimento</th>
+        <th>Idade</th>
+        <th>Função</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for aniversariante in aniversariantes %}
+        {% set idade = current_year - aniversariante.data_nascimento.year %}
+        <tr>
+          <td>{{ aniversariante.nome }}</td>
+          <td>{{ aniversariante.data_nascimento.strftime('%d/%m/%Y') }}</td>
+          <td>{{ idade }}</td>
+          <td>{{ aniversariante.funcao }}</td>
+        </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+
+  <!-- Rodapé com data de emissão (sem hora) -->
+  <div class="footer">
+    Emitido em {{ data_emissao }}
+  </div>
+</body>
+</html>

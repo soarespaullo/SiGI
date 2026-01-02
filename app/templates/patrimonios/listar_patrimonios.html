@@ -54,7 +54,7 @@
                 -
               {% endif %}
             </td>
-            <td>{{ item.data_entrada.strftime('%d-%m-%Y') if item.data_entrada else '-' }}</td>
+            <td>{{ item.data_entrada.strftime('%d/%m/%Y') if item.data_entrada else '-' }}</td>
             <td>
               {% if item.situacao == "Ativo" %}
                 <span class="badge bg-success">Ativo</span>
@@ -68,13 +68,41 @@
               <a href="{{ url_for('patrimonio.editar_patrimonio', id=item.id) }}" class="btn btn-sm btn-primary">
                 <i class="bi bi-pencil-square"></i>
               </a>
-              <form method="POST" action="{{ url_for('patrimonio.excluir_patrimonio', id=item.id) }}" style="display:inline;">
-                <button type="submit" class="btn btn-sm btn-danger" onclick="return confirm('Excluir este patrimônio?')">
-                  <i class="bi bi-trash"></i>
-                </button>
-              </form>
+              <!-- Botão que abre o modal de exclusão -->
+              <button type="button" class="btn btn-sm btn-danger" data-bs-toggle="modal" data-bs-target="#confirmDelete{{ item.id }}">
+                <i class="bi bi-trash"></i>
+              </button>
             </td>
           </tr>
+
+          <!-- 🔹 Modal de confirmação de exclusão -->
+          <div class="modal fade" id="confirmDelete{{ item.id }}" tabindex="-1" aria-labelledby="confirmDeleteLabel{{ item.id }}" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered">
+              <div class="modal-content">
+                <div class="modal-header bg-gradient-base text-white">
+                  <h5 class="modal-title" id="confirmDeleteLabel{{ item.id }}">
+                    Confirmar Exclusão
+                  </h5>
+                  <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Fechar"></button>
+                </div>
+                <div class="modal-body">
+                  Tem certeza que deseja excluir o patrimônio <strong>{{ item.nome }}</strong>?<br>
+                  Esta ação não poderá ser desfeita.
+                </div>
+                <div class="modal-footer">
+                  <form method="POST" action="{{ url_for('patrimonio.excluir_patrimonio', id=item.id) }}">
+                    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                    <button type="submit" class="btn btn-danger">
+                      <i class="bi bi-trash me-1"></i> Excluir
+                    </button>
+                  </form>
+                  <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                    <i class="bi bi-x-circle me-1"></i> Cancelar
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
           {% endfor %}
         {% else %}
           <tr>

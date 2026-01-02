@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Cadastro Realizado - Igreja Central</title>
+
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@3.4.1/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Font Awesome -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet">
+
+    <style>
+        body {
+            background: linear-gradient(135deg, #4e73df 0%, #1cc88a 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .card {
+            background: #fff;
+            border-radius: 15px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+            padding: 50px;
+            text-align: center;
+            max-width: 500px;
+            margin: 30px;
+        }
+
+        .success-icon {
+            width: 100px;
+            height: 100px;
+            background: linear-gradient(135deg, #4e73df 0%, #1cc88a 100%);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 30px;
+            animation: pulse 2s infinite;
+        }
+
+        .success-icon i {
+            font-size: 50px;
+            color: #fff;
+        }
+
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+            100% { transform: scale(1); }
+        }
+
+        h2 {
+            color: #333;
+            margin-bottom: 20px;
+        }
+
+        p {
+            color: #666;
+            font-size: 16px;
+            line-height: 1.6;
+        }
+
+        .igreja-nome {
+            color: #4e73df;
+            font-weight: bold;
+        }
+
+        .btn-voltar {
+            background: linear-gradient(135deg, #4e73df 0%, #1cc88a 100%);
+            border: none;
+            padding: 12px 40px;
+            font-size: 16px;
+            border-radius: 25px;
+            color: #fff;
+            margin-top: 30px;
+        }
+
+        .btn-voltar:hover {
+            background: linear-gradient(135deg, #3b5cc4 0%, #17a673 100%);
+            color: #fff;
+        }
+
+        .social-share {
+            margin-top: 30px;
+            padding-top: 20px;
+            border-top: 1px solid #eee;
+        }
+
+        .social-share p {
+            font-size: 14px;
+            margin-bottom: 15px;
+        }
+
+        .logo-igreja {
+            max-width: 100px;
+            margin-bottom: 20px;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="card">
+        <div class="success-icon">
+            <i class="fa fa-check" aria-label="Cadastro realizado"></i>
+        </div>
+
+        <h2>Cadastro Realizado com Sucesso!</h2>
+
+        <p>
+            Seja muito bem-vindo(a) à <span class="igreja-nome">SiGI</span>!
+        </p>
+
+        <p>
+            <i class="fa fa-heart" style="color: #e74c3c;" aria-label="Coração"></i>
+            Estamos muito felizes em recebê-lo(a)! Em breve entraremos em contato.
+        </p>
+
+        <!-- ✅ Ajuste: volta para cadastro de visitante -->
+        <a href="{{ url_for('member.cadastro_visitante', hash=hash) }}" class="btn btn-voltar">
+            <i class="fa fa-user-plus"></i> Cadastrar outra pessoa
+        </a>
+
+        <div class="social-share">
+            <p>Convide seus amigos e familiares!</p>
+            <a href="https://api.whatsapp.com/send?text=Cadastre-se+na+Igreja+Central%3A+{{ url_for('member.cadastro_visitante', hash=hash, _external=True) }}"
+               target="_blank" class="btn btn-success btn-sm">
+                <i class="fa fa-whatsapp"></i> Compartilhar no WhatsApp
+            </a>
+        </div>
+    </div>
+</body>
+</html>
