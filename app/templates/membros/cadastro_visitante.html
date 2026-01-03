@@ -5,10 +5,21 @@
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
+    
+    <!-- Open Graph meta tags para compartilhamento -->
     <meta property="og:title" content="Cadastro de Visitante - SiGI" />
     <meta property="og:description" content="Preencha seus dados para nos conhecermos melhor." />
-    <meta property="og:image" content="https://sigigreja.ddns.net/static/img/cadastro.png" />
-    <meta property="og:url" content="https://sigigreja.ddns.net/membros/cadastro-visitante/" />
+    <meta property="og:image" content="{{ url_for('static', filename='img/cadastro.png', _external=True) }}" />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:url" content="{{ request.url }}" />
+    <meta property="og:type" content="website" />
+
+    <!-- Twitter Cards (também funcionam em WhatsApp) -->
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="Cadastro de Visitante - SiGI" />
+    <meta name="twitter:description" content="Preencha seus dados para nos conhecermos melhor." />
+    <meta name="twitter:image" content="{{ url_for('static', filename='img/cadastro.png', _external=True) }}" />
 
     <title>Cadastro de Visitante - Igreja</title>
 
