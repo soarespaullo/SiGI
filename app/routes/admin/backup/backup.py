@@ -2,10 +2,11 @@ from flask import Blueprint, render_template, request, flash, redirect, url_for,
 from flask_login import login_required, current_user
 from functools import wraps
 from dotenv import load_dotenv
-import os, subprocess, re, tempfile, zipfile
+from werkzeug.utils import secure_filename
+import os, subprocess, re, tempfile, zipfile, urllib.parse
 from datetime import datetime
 
-from utils.logs import registrar_log   # 👈 importa função de log
+from utils.logs import registrar_log
 
 backup_bp = Blueprint("backup", __name__, url_prefix="/backup")
 
@@ -35,11 +36,10 @@ def gerar_backup():
         return redirect(url_for("admin.backup.backup_page"))
 
     user, password, host, port, dbname = match.groups()
+    password = urllib.parse.unquote(password)  # 👈 decodifica %40 → @
 
-    # 🔹 Data no formato DD-MM-YYYY
     data_str = datetime.now().strftime("%d-%m-%Y")
 
-    # 🔹 Arquivo temporário para o .sql
     tmp_sql = tempfile.NamedTemporaryFile(delete=False, suffix=".sql")
     tmp_sql.close()
 
@@ -50,7 +50,6 @@ def gerar_backup():
             check=True
         )
 
-        # 🔹 Criar o .zip temporário
         zip_filename = f"{dbname}_backup_{data_str}.zip"
         tmp_zip = tempfile.NamedTemporaryFile(delete=False, suffix=".zip")
         tmp_zip.close()
@@ -58,18 +57,18 @@ def gerar_backup():
         with zipfile.ZipFile(tmp_zip.name, "w", zipfile.ZIP_DEFLATED) as zipf:
             zipf.write(tmp_sql.name, arcname=f"{dbname}_backup_{data_str}.sql")
 
-        registrar_log(current_user.nome, f"Gerou backup do banco {dbname}", "sucesso")  # 👈 log
+        registrar_log(current_user.nome or current_user.email or "desconhecido",
+                      f"Gerou backup do banco {dbname}", "sucesso")
         return send_file(tmp_zip.name, as_attachment=True, download_name=zip_filename)
 
     except Exception as e:
-        registrar_log(current_user.nome, f"Erro ao gerar backup do banco {dbname}", "erro")  # 👈 log
+        registrar_log(current_user.nome or current_user.email or "desconhecido",
+                      f"Erro ao gerar backup do banco {dbname}", "erro")
         flash(f"Erro ao gerar backup: {e}", "danger")
         return redirect(url_for("admin.backup.backup_page"))
     finally:
-        # remove o .sql temporário
         if os.path.exists(tmp_sql.name):
             os.remove(tmp_sql.name)
-
 
 @backup_bp.route("/restaurar", methods=["POST"])
 @admin_required
@@ -78,19 +77,15 @@ def restaurar_backup():
     if file:
         filename = secure_filename(file.filename)
 
-        # 🔹 Salva o .zip temporário
-        import tempfile, zipfile
         tmp_zip = tempfile.NamedTemporaryFile(delete=False, suffix=".zip")
         file.save(tmp_zip.name)
 
-        # 🔹 Extrai o .sql de dentro do .zip
         sql_path = None
         with zipfile.ZipFile(tmp_zip.name, "r") as zipf:
             for member in zipf.namelist():
                 if member.endswith(".sql"):
                     sql_path = tempfile.NamedTemporaryFile(delete=False, suffix=".sql").name
                     zipf.extract(member, os.path.dirname(sql_path))
-                    # move para o caminho temporário
                     os.rename(os.path.join(os.path.dirname(sql_path), member), sql_path)
                     break
 
@@ -98,17 +93,15 @@ def restaurar_backup():
             flash("Nenhum arquivo .sql encontrado dentro do .zip.", "danger")
             return redirect(url_for("admin.backup.backup_page"))
 
-        # 🔹 Carrega dados do banco do .env
-        from dotenv import load_dotenv
         load_dotenv()
         db_url = os.getenv("DATABASE_URL")
-        import re
         match = re.match(r"mysql\+pymysql://(.+):(.+)@(.+):(\d+)/(.+)", db_url or "")
         if not match:
             flash("DATABASE_URL inválido ou não configurado.", "danger")
             return redirect(url_for("admin.backup.backup_page"))
 
         user, password, host, port, dbname = match.groups()
+        password = urllib.parse.unquote(password)  # 👈 decodifica %40 → @
 
         try:
             subprocess.run(
@@ -116,13 +109,14 @@ def restaurar_backup():
                 stdin=open(sql_path, "r"),
                 check=True
             )
-            registrar_log(current_user.nome, f"Restaurou backup do banco {dbname}", "sucesso")  # 👈 log
+            registrar_log(current_user.nome or current_user.email or "desconhecido",
+                          f"Restaurou backup do banco {dbname}", "sucesso")
             flash("Backup restaurado com sucesso!", "success")
         except Exception as e:
-            registrar_log(current_user.nome, f"Erro ao restaurar backup do banco {dbname}", "erro")  # 👈 log
+            registrar_log(current_user.nome or current_user.email or "desconhecido",
+                          f"Erro ao restaurar backup do banco {dbname}", "erro")
             flash(f"Erro ao restaurar backup: {e}", "danger")
         finally:
-            # remove temporários
             if os.path.exists(tmp_zip.name):
                 os.remove(tmp_zip.name)
             if sql_path and os.path.exists(sql_path):
