@@ -38,7 +38,7 @@ def novo_usuario():
         novo.set_password(form.senha.data)
         db.session.add(novo)
         db.session.commit()
-        registrar_log(current_user.nome, f"Criou usuário: {novo.email}", "sucesso")  # 👈 log
+        registrar_log(current_user.email, f"Criou usuário: {novo.email}", "sucesso")  # 👈 log
         flash("Usuário criado com sucesso!", "success")
         return redirect(url_for("admin.usuarios.usuarios_page"))
     return render_template("admin/novo_usuario.html", form=form)
@@ -59,7 +59,7 @@ def editar_usuario(id):
         if form.senha.data:
             usuario.set_password(form.senha.data)
         db.session.commit()
-        registrar_log(current_user.nome, f"Editou usuário: {usuario.email}", "sucesso")  # 👈 log
+        registrar_log(current_user.email, f"Editou usuário: {usuario.email}", "sucesso")  # 👈 log
         flash("Usuário atualizado com sucesso!", "success")
         return redirect(url_for("admin.usuarios.usuarios_page"))
     return render_template("admin/editar_usuario.html", form=form, usuario=usuario)
@@ -70,7 +70,7 @@ def excluir_usuario(id):
     usuario = User.query.get_or_404(id)
     db.session.delete(usuario)
     db.session.commit()
-    registrar_log(current_user.nome, f"Excluiu usuário: {usuario.email}", "sucesso")  # 👈 log
+    registrar_log(current_user.email, f"Excluiu usuário: {usuario.email}", "sucesso")  # 👈 log
     flash("Usuário excluído com sucesso!", "success")
     return redirect(url_for("admin.usuarios.usuarios_page"))
 
@@ -80,7 +80,7 @@ def toggle_usuario(id):
     usuario = User.query.get_or_404(id)
     usuario.ativo = not usuario.ativo
     db.session.commit()
-    registrar_log(current_user.nome, f"Trocou status do usuário: {usuario.email} para {'ativo' if usuario.ativo else 'inativo'}", "sucesso")  # 👈 log
+    registrar_log(current_user.email, f"Trocou status do usuário: {usuario.email} para {'ativo' if usuario.ativo else 'inativo'}", "sucesso")  # 👈 log
     flash(
         f"Usuário {usuario.nome} foi {'ativado' if usuario.ativo else 'desativado'}.",
         "success" if usuario.ativo else "warning"

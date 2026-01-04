@@ -57,6 +57,7 @@ def gerar_backup():
         with zipfile.ZipFile(tmp_zip.name, "w", zipfile.ZIP_DEFLATED) as zipf:
             zipf.write(tmp_sql.name, arcname=f"{dbname}_backup_{data_str}.sql")
 
+<<<<<<< HEAD
         registrar_log(current_user.nome or current_user.email or "desconhecido",
                       f"Gerou backup do banco {dbname}", "sucesso")
         return send_file(tmp_zip.name, as_attachment=True, download_name=zip_filename)
@@ -64,6 +65,13 @@ def gerar_backup():
     except Exception as e:
         registrar_log(current_user.nome or current_user.email or "desconhecido",
                       f"Erro ao gerar backup do banco {dbname}", "erro")
+=======
+        registrar_log(current_user.email, f"Gerou backup do banco {dbname}", "sucesso")  # 👈 log
+        return send_file(tmp_zip.name, as_attachment=True, download_name=zip_filename)
+
+    except Exception as e:
+        registrar_log(current_user.email, f"Erro ao gerar backup do banco {dbname}", "erro")  # 👈 log
+>>>>>>> 3207428 (erro log)
         flash(f"Erro ao gerar backup: {e}", "danger")
         return redirect(url_for("admin.backup.backup_page"))
     finally:
@@ -109,12 +117,19 @@ def restaurar_backup():
                 stdin=open(sql_path, "r"),
                 check=True
             )
+<<<<<<< HEAD
             registrar_log(current_user.nome or current_user.email or "desconhecido",
                           f"Restaurou backup do banco {dbname}", "sucesso")
             flash("Backup restaurado com sucesso!", "success")
         except Exception as e:
             registrar_log(current_user.nome or current_user.email or "desconhecido",
                           f"Erro ao restaurar backup do banco {dbname}", "erro")
+=======
+            registrar_log(current_user.email, f"Restaurou backup do banco {dbname}", "sucesso")  # 👈 log
+            flash("Backup restaurado com sucesso!", "success")
+        except Exception as e:
+            registrar_log(current_user.email, f"Erro ao restaurar backup do banco {dbname}", "erro")  # 👈 log
+>>>>>>> 3207428 (erro log)
             flash(f"Erro ao restaurar backup: {e}", "danger")
         finally:
             if os.path.exists(tmp_zip.name):

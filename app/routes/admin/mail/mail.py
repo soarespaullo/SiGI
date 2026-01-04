@@ -34,7 +34,7 @@ def configurar_mail():
         set_key(dotenv_path, "MAIL_DEFAULT_NAME", form.mail_default_name.data)
         set_key(dotenv_path, "MAIL_DEFAULT_EMAIL", form.mail_default_email.data)
 
-        registrar_log(current_user.nome, "Atualizou configurações de e-mail", "sucesso")  # 👈 log
+        registrar_log(current_user.email, "Atualizou configurações de e-mail", "sucesso")  # 👈 log
         flash("Configurações de e-mail salvas com sucesso!", "success")
         return redirect(url_for("admin.mail.configurar_mail"))
 

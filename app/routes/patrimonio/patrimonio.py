@@ -72,7 +72,7 @@ def novo_patrimonio():
         )
         db.session.add(item)
         db.session.commit()
-        registrar_log(current_user.nome, f"Cadastrou patrimônio: {item.nome}", "sucesso")  # 👈 log
+        registrar_log(current_user.email, f"Cadastrou patrimônio: {item.nome}", "sucesso")  # 👈 log
         flash("Patrimônio cadastrado com sucesso!", "success")
         return redirect(url_for("patrimonio.listar_patrimonios"))
     else:
@@ -105,7 +105,7 @@ def editar_patrimonio(id):
         item.situacao = form.situacao.data
 
         db.session.commit()
-        registrar_log(current_user.nome, f"Editou patrimônio: {item.nome}", "sucesso")  # 👈 log
+        registrar_log(current_user.email, f"Editou patrimônio: {item.nome}", "sucesso")  # 👈 log
         flash("Patrimônio atualizado com sucesso!", "success")
         return redirect(url_for("patrimonio.listar_patrimonios"))
     else:
@@ -124,7 +124,7 @@ def excluir_patrimonio(id):
     db.session.delete(item)
     db.session.commit()
     from utils.logs import registrar_log
-    registrar_log(current_user.nome, f"Excluiu patrimônio: {item.nome}", "sucesso")  # 👈 log
+    registrar_log(current_user.email, f"Excluiu patrimônio: {item.nome}", "sucesso")  # 👈 log
     flash("Patrimônio excluído com sucesso!", "info")
     return redirect(url_for("patrimonio.listar_patrimonios"))
 
@@ -157,7 +157,7 @@ def buscar_patrimonios():
         else:
             flash(f"{patrimonios.total} patrimônio(s) encontrado(s)", "info")
         from utils.logs import registrar_log
-        registrar_log(current_user.nome, f"Buscou patrimônio com termo: {termo}", "sucesso")  # 👈 log
+        registrar_log(current_user.email, f"Buscou patrimônio com termo: {termo}", "sucesso")  # 👈 log
 
     return render_template("patrimonios/listar_patrimonios.html", patrimonios=patrimonios, termo=termo)
 
@@ -195,7 +195,7 @@ def inventario():
         flash("Nenhum patrimônio encontrado para o inventário", "warning")
 
     from utils.logs import registrar_log
-    registrar_log(current_user.nome, "Gerou inventário de patrimônios", "sucesso")  # 👈 log
+    registrar_log(current_user.email, "Gerou inventário de patrimônios", "sucesso")  # 👈 log
 
     return render_template(
         "patrimonios/inventario.html",
