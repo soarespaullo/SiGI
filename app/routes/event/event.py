@@ -4,8 +4,8 @@ from datetime import datetime, timedelta
 from app.extensions import db, mail              # ✅ importa db e mail da extensions.py
 from app.models import Evento, Member, User      # ✅ importa models do pacote app.models
 from app.routes.event.forms import EventoForm    # ✅ ajusta para app.routes
-from flask_login import login_required           # 👈 protege rotas com Flask-Login
-
+from flask_login import login_required, current_user   # 👈 protege rotas com Flask-Login
+from utils.logs import registrar_log             # 👈 importa função de log
 
 event_bp = Blueprint("event", __name__, url_prefix="/eventos")
 
@@ -47,6 +47,7 @@ def novo_evento():
 
         db.session.add(evento)
         db.session.commit()
+        registrar_log(current_user.nome, f"Criou evento: {evento.titulo}", "sucesso")  # 👈 log
         flash("Evento criado com sucesso!", "success")
         return redirect(url_for("event.listar_eventos"))
     return render_template("eventos/novo_evento.html", form=form)
@@ -76,6 +77,7 @@ def editar_evento(id):
             evento.token_expira_em = evento.data_fim
 
         db.session.commit()
+        registrar_log(current_user.nome, f"Editou evento: {evento.titulo}", "sucesso")  # 👈 log
         flash("Evento atualizado com sucesso!", "success")
         return redirect(url_for("event.listar_eventos"))
     return render_template("eventos/editar_evento.html", form=form, evento=evento)
@@ -89,6 +91,7 @@ def excluir_evento(id):
     evento = Evento.query.get_or_404(id)
     db.session.delete(evento)
     db.session.commit()
+    registrar_log(current_user.nome, f"Excluiu evento: {evento.titulo}", "sucesso")  # 👈 log
     flash("Evento excluído com sucesso!", "success")
     return redirect(url_for("event.listar_eventos"))
 
@@ -163,6 +166,7 @@ def enviar_lembretes_eventos():
             html=html_body
         )
         mail.send(msg)
+        registrar_log(current_user.nome, f"Enviou lembrete do evento: {ev.titulo}", "sucesso")  # 👈 log
         print(f"Lembrete enviado para evento: {ev.titulo}")
 
     flash("Lembretes enviados com sucesso!", "success")

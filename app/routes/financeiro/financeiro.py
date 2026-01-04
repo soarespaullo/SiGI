@@ -9,7 +9,8 @@ from app.models import Financeiro               # ✅ importa Financeiro do paco
 from app.routes.financeiro.forms import (       # ✅ ajusta para app.routes
     EntradaForm, SaidaForm, FiltroRelatorioForm, ComprovanteForm
 )
-from flask_login import login_required          # 👈 protege rotas com Flask-Login
+from flask_login import login_required, current_user   # 👈 protege rotas com Flask-Login
+from utils.logs import registrar_log             # 👈 importa função de log
 
 financeiro_bp = Blueprint("financeiro", __name__, url_prefix="/financeiro")
 
@@ -75,6 +76,7 @@ def entradas():
         )
         db.session.add(nova)
         db.session.commit()
+        registrar_log(current_user.nome, f"Registrou entrada: {nova.descricao}", "sucesso")  # 👈 log
         flash("Entrada registrada com sucesso!", "success")
         return redirect(url_for('financeiro.entradas'))
 
@@ -92,9 +94,11 @@ def excluir_entrada(id):
     try:
         db.session.delete(entrada)
         db.session.commit()
+        registrar_log(current_user.nome, f"Excluiu entrada: {entrada.descricao}", "sucesso")  # 👈 log
         flash("Entrada excluída com sucesso!", "success")
     except Exception:
         db.session.rollback()
+        registrar_log(current_user.nome, f"Erro ao excluir entrada: {entrada.descricao}", "erro")  # 👈 log
         flash("Erro ao excluir entrada.", "danger")
 
     return redirect(url_for('financeiro.entradas'))
@@ -116,14 +120,19 @@ def editar_entrada(id):
         entrada.descricao = form.descricao.data
         entrada.conta = form.conta.data
         db.session.commit()
+        registrar_log(current_user.nome, f"Editou entrada: {entrada.descricao}", "sucesso")  # 👈 log
         flash("Entrada atualizada com sucesso!", "success")
         return redirect(url_for('financeiro.entradas'))
 
     return render_template('financeiro/editar_entrada.html', form=form, entrada=entrada)
 
+
 # -----------------------------
 # 📄 Rotas de Saídas
 # -----------------------------
+from flask_login import login_required, current_user   # 👈 protege rotas com Flask-Login
+from utils.logs import registrar_log                   # 👈 importa função de log
+
 @financeiro_bp.route('/saidas', methods=['GET', 'POST'])
 @login_required   # 👈 protege a rota
 def saidas():
@@ -142,6 +151,7 @@ def saidas():
         )
         db.session.add(nova)
         db.session.commit()
+        registrar_log(current_user.nome, f"Registrou saída: {nova.descricao}", "sucesso")  # 👈 log
         flash("Saída registrada com sucesso!", "success")
         return redirect(url_for('financeiro.saidas'))
 
@@ -159,9 +169,11 @@ def excluir_saida(id):
     try:
         db.session.delete(saida)
         db.session.commit()
+        registrar_log(current_user.nome, f"Excluiu saída: {saida.descricao}", "sucesso")  # 👈 log
         flash("Saída excluída com sucesso!", "success")
     except Exception:
         db.session.rollback()
+        registrar_log(current_user.nome, f"Erro ao excluir saída: {saida.descricao}", "erro")  # 👈 log
         flash("Erro ao excluir saída.", "danger")
 
     return redirect(url_for('financeiro.saidas'))
@@ -183,6 +195,7 @@ def editar_saida(id):
         saida.descricao = form.descricao.data
         saida.conta = form.conta.data
         db.session.commit()
+        registrar_log(current_user.nome, f"Editou saída: {saida.descricao}", "sucesso")  # 👈 log
         flash("Saída atualizada com sucesso!", "success")
         return redirect(url_for('financeiro.saidas'))
 
@@ -191,8 +204,6 @@ def editar_saida(id):
 # -----------------------------
 # 📄 Rotas de Relatórios, Exportação e Comprovantes
 # -----------------------------
-from flask_login import login_required   # 👈 protege rotas com Flask-Login
-
 @financeiro_bp.route('/relatorios', methods=['GET', 'POST'])
 @login_required   # 👈 protege a rota
 def relatorios():
@@ -223,6 +234,7 @@ def relatorios():
     categorias_labels = list(por_categoria.keys())
     categorias_data = [por_categoria[c] for c in categorias_labels]
 
+    registrar_log(current_user.nome, "Gerou relatório financeiro", "sucesso")  # 👈 log
     return render_template(
         'financeiro/relatorios.html',
         form=form,
@@ -273,6 +285,7 @@ def export_csv():
             "Sim" if r.conciliado else "Não"
         ])
 
+    registrar_log(current_user.nome, "Exportou relatório financeiro em CSV", "sucesso")  # 👈 log
     return Response(output.getvalue(), mimetype='text/csv',
                     headers={"Content-Disposition": "attachment; filename=relatorio_financeiro.csv"})
 
@@ -297,6 +310,7 @@ def comprovantes():
         )
         db.session.add(novo)
         db.session.commit()
+        registrar_log(current_user.nome, f"Enviou comprovante: {filename}", "sucesso")  # 👈 log
         flash("Comprovante enviado com sucesso!", "success")
         return redirect(url_for('financeiro.comprovantes'))
 

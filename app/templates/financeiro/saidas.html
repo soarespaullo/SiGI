@@ -1,5 +1,6 @@
 {% extends "base.html" %}
 {% block title %}Saídas{% endblock %}
+
 {% block content %}
 <div class="container mt-4">
   <h2 class="mb-4"><i class="bi bi-arrow-up-circle text-danger"></i> Saídas (Despesas)</h2>
@@ -31,11 +32,9 @@
           </div>
         </div>
         <div class="mt-3 d-flex gap-2">
-          <!-- Botão Salvar com ícone -->
           <button type="submit" class="btn btn-danger">
             <i class="bi bi-check-circle"></i> Salvar
           </button>
-          <!-- Botão Cancelar com ícone -->
           <a href="{{ url_for('financeiro.financeiro') }}" class="btn btn-secondary">
             <i class="bi bi-x-circle"></i> Cancelar
           </a>
@@ -47,51 +46,81 @@
   <div class="card shadow-sm">
     <div class="card-body">
       <h5 class="card-title">Histórico de Saídas</h5>
-      <table class="table table-striped align-middle">
-        <thead>
-          <tr>
-            <th>Data</th>
-            <th>Categoria</th>
-            <th>Conta</th>
-            <th>Descrição</th>
-            <th>Valor (R$)</th>
-            <th>Ações</th>
-          </tr>
-        </thead>
-        <tbody>
-          {% for r in saidas %}
-          <tr>
-            <!-- Data formatada dd/mm/yyyy -->
-            <td>{{ r.data.strftime('%d/%m/%Y') }}</td>
-            <td>{{ r.categoria }}</td>
-            <td>{{ r.conta }}</td>
-            <td>{{ r.descricao or '-' }}</td>
-            <!-- Valor formatado como moeda -->
-            <td>
-              {{ ("R$ {:,.2f}".format(r.valor)).replace(",", "X").replace(".", ",").replace("X", ".") }}
-            </td>
-            <!-- Botões de ações -->
-            <td>
-              <!-- Botão Editar -->
-              <a href="{{ url_for('financeiro.editar_saida', id=r.id) }}" class="btn btn-sm btn-outline-warning">
-                <i class="bi bi-pencil-square"></i> Editar
-              </a>
-              <!-- Botão Excluir -->
-              <form method="POST" action="{{ url_for('financeiro.excluir_saida', id=r.id) }}" style="display:inline;">
-                <button type="submit" class="btn btn-sm btn-outline-danger" onclick="return confirm('Deseja realmente excluir esta saída?');">
-                  <i class="bi bi-trash"></i> Excluir
-                </button>
-              </form>
-            </td>
-          </tr>
-          {% else %}
-          <tr>
-            <td colspan="6" class="text-center text-muted">Nenhuma saída registrada.</td>
-          </tr>
-          {% endfor %}
-        </tbody>
-      </table>
+      <!-- 🔹 Responsividade com scroll horizontal -->
+      <div class="table-responsive">
+        <table class="table table-striped align-middle">
+          <thead>
+            <tr>
+              <th>Data</th>
+              <th>Categoria</th>
+              <th>Conta</th>
+              <th>Descrição</th>
+              <th>Valor (R$)</th>
+              <th>Ações</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% if saidas %}
+              {% for r in saidas %}
+              <tr>
+                <td>{{ r.data.strftime('%d/%m/%Y') }}</td>
+                <td>{{ r.categoria }}</td>
+                <td>{{ r.conta }}</td>
+                <td>{{ r.descricao or '-' }}</td>
+                <td>
+                  {{ ("R$ {:,.2f}".format(r.valor)).replace(",", "X").replace(".", ",").replace("X", ".") }}
+                </td>
+                <td>
+                  <a href="{{ url_for('financeiro.editar_saida', id=r.id) }}" class="btn btn-sm btn-outline-warning">
+                    <i class="bi bi-pencil-square"></i> Editar
+                  </a>
+                  <!-- Botão que abre modal de exclusão -->
+                  <button type="button" class="btn btn-sm btn-outline-danger" data-bs-toggle="modal" data-bs-target="#confirmDelete{{ r.id }}">
+                    <i class="bi bi-trash"></i> Excluir
+                  </button>
+                </td>
+              </tr>
+              {% endfor %}
+            {% else %}
+              <tr>
+                <td colspan="6" class="text-center text-muted">Nenhuma saída registrada.</td>
+              </tr>
+            {% endif %}
+          </tbody>
+        </table>
+      </div>
     </div>
   </div>
 </div>
+{% endblock %}
+{% block modals %}
+  {% for r in saidas %}
+    <!-- 🔹 Modal de confirmação de exclusão -->
+    <div class="modal fade" id="confirmDelete{{ r.id }}" tabindex="-1" aria-labelledby="confirmDeleteLabel{{ r.id }}" aria-hidden="true">
+      <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+          <div class="modal-header bg-gradient-base">
+            <h5 class="modal-title" id="confirmDeleteLabel{{ r.id }}">Confirmar Exclusão</h5>
+            <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Fechar"></button>
+          </div>
+          <div class="modal-body">
+            Tem certeza que deseja excluir a saída de <strong>{{ r.data.strftime('%d/%m/%Y') }}</strong> no valor de 
+            <strong>{{ ("R$ {:,.2f}".format(r.valor)).replace(",", "X").replace(".", ",").replace("X", ".") }}</strong>?<br>
+            Esta ação não poderá ser desfeita.
+          </div>
+          <div class="modal-footer">
+            <form method="POST" action="{{ url_for('financeiro.excluir_saida', id=r.id) }}">
+              <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+              <button type="submit" class="btn btn-danger">
+                <i class="bi bi-trash me-1"></i> Excluir
+              </button>
+            </form>
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+              <i class="bi bi-x-circle me-1"></i> Cancelar
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  {% endfor %}
 {% endblock %}

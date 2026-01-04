@@ -82,42 +82,13 @@
               <a href="{{ url_for('event.editar_evento', id=evento.id) }}" class="btn btn-sm btn-primary">
                 <i class="bi bi-pencil-square"></i>
               </a>
-              <!-- 🔗 Botão de Link Público (compartilhamento) -->
               <a href="{{ url_for('event.evento_publico_token', public_token=evento.public_token, _external=True) }}" 
                  target="_blank" class="btn btn-sm btn-success">
                 <i class="bi bi-share"></i>
               </a>
-              <!-- 🔹 Botão que abre o modal -->
               <button type="button" class="btn btn-sm btn-danger" data-bs-toggle="modal" data-bs-target="#confirmDelete{{ evento.id }}">
                 <i class="bi bi-trash"></i>
               </button>
-
-              <!-- 🔹 Modal de confirmação -->
-              <div class="modal fade" id="confirmDelete{{ evento.id }}" tabindex="-1" aria-labelledby="confirmDeleteLabel{{ evento.id }}" aria-hidden="true">
-                <div class="modal-dialog modal-dialog-centered">
-                  <div class="modal-content">
-                    <div class="modal-header bg-gradient-base">
-                      <h5 class="modal-title" id="confirmDeleteLabel{{ evento.id }}">Confirmar Exclusão</h5>
-                      <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Fechar"></button>
-                    </div>
-                    <div class="modal-body">
-                      Tem certeza que deseja excluir o evento <strong>{{ evento.titulo }}</strong>?<br>
-                      Esta ação não poderá ser desfeita.
-                    </div>
-		<div class="modal-footer">
-		  <form method="POST" action="{{ url_for('event.excluir_evento', id=evento.id) }}" style="display:inline;">
-		      <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
-		      <button type="submit" class="btn btn-danger">
-		        <i class="bi bi-trash me-1"></i> Excluir
-		      </button>
-		    </form>
-		    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
-		      <i class="bi bi-x-circle me-1"></i> Cancelar
-		    </button>
-		  </div>
-                </div>
-                </div>
-              </div>
             </td>
           </tr>
           {% endfor %}
@@ -135,6 +106,35 @@
   <!-- 🔹 Inclusão da paginação -->
   {% set pagination = eventos %}
   {% include "pagination/pagination.html" %}
-
 </div>
+{% endblock %}
+{% block modals %}
+  {% for evento in eventos.items %}
+    <!-- 🔹 Modal de confirmação de exclusão -->
+    <div class="modal fade" id="confirmDelete{{ evento.id }}" tabindex="-1" aria-labelledby="confirmDeleteLabel{{ evento.id }}" aria-hidden="true">
+      <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+          <div class="modal-header bg-gradient-base">
+            <h5 class="modal-title" id="confirmDeleteLabel{{ evento.id }}">Confirmar Exclusão</h5>
+            <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Fechar"></button>
+          </div>
+          <div class="modal-body">
+            Tem certeza que deseja excluir o evento <strong>{{ evento.titulo }}</strong>?<br>
+            Esta ação não poderá ser desfeita.
+          </div>
+          <div class="modal-footer">
+            <form method="POST" action="{{ url_for('event.excluir_evento', id=evento.id) }}" style="display:inline;">
+              <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+              <button type="submit" class="btn btn-danger">
+                <i class="bi bi-trash me-1"></i> Excluir
+              </button>
+            </form>
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+              <i class="bi bi-x-circle me-1"></i> Cancelar
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  {% endfor %}
 {% endblock %}

@@ -579,21 +579,3 @@ def exportar_aniversariantes_pdf():
     response.headers["Content-Disposition"] = "inline; filename=aniversariantes.pdf"
     return response
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-    

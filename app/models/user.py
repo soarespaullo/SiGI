@@ -13,6 +13,7 @@ class User(db.Model, UserMixin):   # 👈 herda de UserMixin
     password_hash = db.Column(db.String(255), nullable=False)
     role = db.Column(db.String(20), default="admin")  # pode ser "admin", "user", etc.
     nome = db.Column(db.String(100), nullable=True)
+    ativo = db.Column(db.Boolean, default=True)  # 🔹 novo campo para ativar/desativar usuário
 
     # Define a senha (gera o hash seguro)
     def set_password(self, password: str) -> None:

@@ -1,0 +1,68 @@
+{% extends "base.html" %}
+{% block title %}Novo Usuário{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+  <h2><i class="bi bi-person-plus text-success"></i> Criar Novo Usuário</h2>
+  <div class="card shadow-sm mt-3">
+    <div class="card-body">
+      <form method="POST" autocomplete="off">
+        {{ form.hidden_tag() }}
+
+        <!-- Nome -->
+        <div class="mb-3">
+          {{ form.nome.label(class="form-label") }}
+          {{ form.nome(class="form-control" + (" is-invalid" if form.nome.errors else ""), placeholder="Digite o nome completo") }}
+          {% for error in form.nome.errors %}
+            <div class="text-danger small">{{ error }}</div>
+          {% endfor %}
+        </div>
+
+        <!-- Email -->
+        <div class="mb-3">
+          {{ form.email.label(class="form-label") }}
+          {{ form.email(class="form-control" + (" is-invalid" if form.email.errors else ""), placeholder="exemplo@dominio.com") }}
+          {% for error in form.email.errors %}
+            <div class="text-danger small">{{ error }}</div>
+          {% endfor %}
+        </div>
+
+        <!-- Senha -->
+        <div class="mb-3">
+          {{ form.senha.label(class="form-label") }}
+          {{ form.senha(class="form-control" + (" is-invalid" if form.senha.errors else ""), type="password", placeholder="Mínimo 6 caracteres") }}
+          {% for error in form.senha.errors %}
+            <div class="text-danger small">{{ error }}</div>
+          {% endfor %}
+        </div>
+
+        <!-- Papel -->
+        <div class="mb-3">
+          {{ form.role.label(class="form-label") }}
+          {{ form.role(class="form-select" + (" is-invalid" if form.role.errors else "")) }}
+          {% for error in form.role.errors %}
+            <div class="text-danger small">{{ error }}</div>
+          {% endfor %}
+        </div>
+
+        <!-- Status (Ativo/Inativo) -->
+        <div class="mb-3">
+          {{ form.ativo.label(class="form-label") }}
+          {{ form.ativo(class="form-select" + (" is-invalid" if form.ativo.errors else "")) }}
+          {% for error in form.ativo.errors %}
+            <div class="text-danger small">{{ error }}</div>
+          {% endfor %}
+        </div>
+
+        <!-- Botões -->
+        <button type="submit" class="btn btn-success">
+          <i class="bi bi-check-circle"></i> Criar
+        </button>
+        <a href="{{ url_for('admin.usuarios.usuarios_page') }}" class="btn btn-secondary">
+          <i class="bi bi-x-circle"></i> Cancelar
+        </a>
+      </form>
+    </div>
+  </div>
+</div>
+{% endblock %}

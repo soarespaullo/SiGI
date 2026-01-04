@@ -1,0 +1,116 @@
+{% extends "base.html" %}
+{% block title %}Configuração de E-mail{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+
+  <!-- Cabeçalho com botão voltar -->
+  <div class="d-flex justify-content-between align-items-center mb-3">
+    <h2><i class="bi bi-envelope text-primary"></i> Configuração de E-mail</h2>
+    <a href="{{ url_for('admin.configuracoes') }}" class="btn btn-secondary">
+      <i class="bi bi-arrow-left-circle"></i> Voltar para Configurações
+    </a>
+  </div>
+
+  <!-- Texto informativo fixo (modelo igual ao backup) -->
+  <div class="card shadow-sm mb-4 border-info">
+    <div class="card-body">
+      <h5 class="card-title text-info">
+        <i class="bi bi-info-circle"></i> Importante
+      </h5>
+      <p class="mb-0">
+        Configure corretamente o servidor de e-mail para garantir o envio de notificações do sistema.  
+        Informe o <strong>servidor SMTP</strong> (ex: <code>smtp.exemplo.com</code>), a <strong>porta</strong> (587 para TLS ou 465 para SSL),  
+        marque <strong>TLS ou SSL</strong> conforme necessário, e informe o <strong>usuário e senha</strong> da conta de e-mail.  
+        Também defina o <strong>nome</strong> e <strong>e-mail padrão</strong> que aparecerão como remetente.
+      </p>
+    </div>
+  </div>
+
+  <!-- Card com abas no mesmo tamanho da mensagem -->
+  <div class="row">
+    <div class="col-md-16">
+      <div class="card shadow-sm mb-4">
+        <div class="card-header bg-light">
+          <ul class="nav nav-tabs card-header-tabs" id="mailConfigTabs" role="tablist">
+            <li class="nav-item">
+              <button class="nav-link active" id="server-tab" data-bs-toggle="tab" data-bs-target="#server" type="button" role="tab">
+                <i class="bi bi-hdd-network"></i> Servidor
+              </button>
+            </li>
+            <li class="nav-item">
+              <button class="nav-link" id="security-tab" data-bs-toggle="tab" data-bs-target="#security" type="button" role="tab">
+                <i class="bi bi-shield-lock"></i> Segurança
+              </button>
+            </li>
+            <li class="nav-item">
+              <button class="nav-link" id="sender-tab" data-bs-toggle="tab" data-bs-target="#sender" type="button" role="tab">
+                <i class="bi bi-person-circle"></i> Remetente
+              </button>
+            </li>
+          </ul>
+        </div>
+        <div class="card-body">
+          <form method="POST">
+            {{ form.hidden_tag() }}
+            <div class="tab-content mt-3" id="mailConfigTabsContent">
+
+              <!-- Aba Servidor -->
+              <div class="tab-pane fade show active" id="server" role="tabpanel">
+                <div class="mb-3">
+                  {{ form.mail_server.label }}
+                  {{ form.mail_server(class="form-control", placeholder="Ex: smtp.exemplo.com") }}
+                </div>
+                <div class="mb-3">
+                  {{ form.mail_port.label }}
+                  {{ form.mail_port(class="form-control", placeholder="Ex: 587") }}
+                </div>
+              </div>
+
+              <!-- Aba Segurança -->
+              <div class="tab-pane fade" id="security" role="tabpanel">
+                <div class="form-check mb-3">
+                  {{ form.mail_use_tls(class="form-check-input") }} {{ form.mail_use_tls.label }}
+                </div>
+                <div class="form-check mb-3">
+                  {{ form.mail_use_ssl(class="form-check-input") }} {{ form.mail_use_ssl.label }}
+                </div>
+                <div class="mb-3">
+                  {{ form.mail_username.label }}
+                  {{ form.mail_username(class="form-control", placeholder="Ex: usuario@dominio.com") }}
+                </div>
+                <div class="mb-3">
+                  {{ form.mail_password.label }}
+                  {{ form.mail_password(class="form-control", placeholder="Digite sua senha") }}
+                </div>
+              </div>
+
+              <!-- Aba Remetente -->
+              <div class="tab-pane fade" id="sender" role="tabpanel">
+                <div class="mb-3">
+                  {{ form.mail_default_name.label }}
+                  {{ form.mail_default_name(class="form-control", placeholder="Ex: Sistema SIGI") }}
+                </div>
+                <div class="mb-3">
+                  {{ form.mail_default_email.label }}
+                  {{ form.mail_default_email(class="form-control", placeholder="Ex: sistema@dominio.com") }}
+                </div>
+              </div>
+            </div>
+
+            <!-- Botões lado a lado -->
+            <div class="d-flex justify-content-between mt-4">
+              <a href="{{ url_for('admin.configuracoes') }}" class="btn btn-outline-secondary">
+                <i class="bi bi-x-circle"></i> Cancelar
+              </a>
+              <button type="submit" class="btn btn-success">
+                <i class="bi bi-save"></i> Salvar
+              </button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

@@ -4,7 +4,8 @@ from app.models import Patrimonio                 # ✅ importa Patrimonio do pa
 from app.routes.patrimonio.forms import PatrimonioForm  # ✅ ajusta para app.routes
 from datetime import datetime
 from werkzeug.datastructures import MultiDict
-from flask_login import login_required            # 👈 protege rotas com Flask-Login
+from flask_login import login_required, current_user    # 👈 protege rotas com Flask-Login
+from utils.logs import registrar_log                     # 👈 importa função de log
 
 patrimonio_bp = Blueprint("patrimonio", __name__, url_prefix="/patrimonios")
 
@@ -71,6 +72,7 @@ def novo_patrimonio():
         )
         db.session.add(item)
         db.session.commit()
+        registrar_log(current_user.nome, f"Cadastrou patrimônio: {item.nome}", "sucesso")  # 👈 log
         flash("Patrimônio cadastrado com sucesso!", "success")
         return redirect(url_for("patrimonio.listar_patrimonios"))
     else:
@@ -103,12 +105,14 @@ def editar_patrimonio(id):
         item.situacao = form.situacao.data
 
         db.session.commit()
+        registrar_log(current_user.nome, f"Editou patrimônio: {item.nome}", "sucesso")  # 👈 log
         flash("Patrimônio atualizado com sucesso!", "success")
         return redirect(url_for("patrimonio.listar_patrimonios"))
     else:
         if request.method == "POST":
             print("Erros de validação:", form.errors)
     return render_template("patrimonios/editar_patrimonio.html", form=form, item=item)
+
 
 # -----------------------------
 # ❌ Excluir Patrimônio
@@ -119,6 +123,8 @@ def excluir_patrimonio(id):
     item = Patrimonio.query.get_or_404(id)
     db.session.delete(item)
     db.session.commit()
+    from utils.logs import registrar_log
+    registrar_log(current_user.nome, f"Excluiu patrimônio: {item.nome}", "sucesso")  # 👈 log
     flash("Patrimônio excluído com sucesso!", "info")
     return redirect(url_for("patrimonio.listar_patrimonios"))
 
@@ -150,6 +156,8 @@ def buscar_patrimonios():
             flash("1 patrimônio encontrado", "info")
         else:
             flash(f"{patrimonios.total} patrimônio(s) encontrado(s)", "info")
+        from utils.logs import registrar_log
+        registrar_log(current_user.nome, f"Buscou patrimônio com termo: {termo}", "sucesso")  # 👈 log
 
     return render_template("patrimonios/listar_patrimonios.html", patrimonios=patrimonios, termo=termo)
 
@@ -185,6 +193,9 @@ def inventario():
 
     if not patrimonios:
         flash("Nenhum patrimônio encontrado para o inventário", "warning")
+
+    from utils.logs import registrar_log
+    registrar_log(current_user.nome, "Gerou inventário de patrimônios", "sucesso")  # 👈 log
 
     return render_template(
         "patrimonios/inventario.html",

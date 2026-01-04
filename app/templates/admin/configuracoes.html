@@ -1,0 +1,83 @@
+{% extends "base.html" %}
+{% block title %}Configurações Gerais{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+  <h2><i class="bi bi-gear text-secondary"></i> Configurações Gerais</h2>
+
+  <div class="row g-4">
+    <!-- Usuários -->
+    <div class="col-md-4">
+      <div class="card shadow-sm border-0 h-100 text-center">
+        <div class="card-body">
+          <i class="bi bi-people fs-1 text-primary mb-3"></i>
+          <h5 class="card-title">Usuários</h5>
+          <p class="text-muted">Gerencie os usuários e suas permissões de acesso ao sistema.</p>
+          <!-- Ajusta para rota GET dedicada de usuários -->
+          <a href="{{ url_for('admin.usuarios.usuarios_page') }}" class="btn btn-outline-primary">
+            <i class="bi bi-box-arrow-in-right"></i> Acessar
+          </a>
+        </div>
+      </div>
+    </div>
+
+    <!-- Backup -->
+    <div class="col-md-4">
+      <div class="card shadow-sm border-0 h-100 text-center">
+        <div class="card-body">
+          <i class="bi bi-hdd-network fs-1 text-success mb-3"></i>
+          <h5 class="card-title">Backup</h5>
+          <p class="text-muted">Crie e restaure backups do sistema.</p>
+          <!-- Ajusta para rota GET dedicada de backup -->
+          <a href="{{ url_for('admin.backup.backup_page') }}" class="btn btn-outline-success">
+            <i class="bi bi-box-arrow-in-right"></i> Acessar
+          </a>
+        </div>
+      </div>
+    </div>
+
+    <!-- Configurações de Email -->
+    <div class="col-md-4">
+      <div class="card shadow-sm border-0 h-100 text-center">
+        <div class="card-body">
+          <i class="bi bi-envelope fs-1 text-warning mb-3"></i>
+          <h5 class="card-title">Email</h5>
+          <p class="text-muted">Configure o servidor de email usado pelo sistema.</p>
+          <!-- Ajusta para rota GET dedicada de mail -->
+          <a href="{{ url_for('admin.mail.configurar_mail') }}" class="btn btn-outline-warning">
+            <i class="bi bi-box-arrow-in-right"></i> Acessar
+          </a>
+        </div>
+      </div>
+    </div>
+
+    <!-- Permissões -->
+    <div class="col-md-4">
+      <div class="card shadow-sm border-0 h-100 text-center">
+        <div class="card-body">
+          <i class="bi bi-shield-lock fs-1 text-secondary mb-3"></i>
+          <h5 class="card-title">Permissões</h5>
+          <p class="text-muted">Gerencie permissões específicas para cada usuário.</p>
+          <a href="#" class="btn btn-outline-secondary">
+            <i class="bi bi-box-arrow-in-right"></i> Acessar
+          </a>
+        </div>
+      </div>
+    </div>
+
+    <!-- Logs do Sistema -->
+    <div class="col-md-4">
+      <div class="card shadow-sm border-0 h-100 text-center">
+        <div class="card-body">
+          <i class="bi bi-journal-text fs-1 text-dark mb-3"></i>
+          <h5 class="card-title">Logs do Sistema</h5>
+          <p class="text-muted">Visualize registros de atividades e auditoria do sistema.</p>
+          <a href="{{ url_for('admin.logs.visualizar_logs') }}" class="btn btn-outline-dark">
+            <i class="bi bi-box-arrow-in-right"></i> Acessar
+          </a>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

@@ -1,0 +1,65 @@
+{% extends "base.html" %}
+{% block title %}Backup e Restauração{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+  <div class="d-flex justify-content-between align-items-center mb-3">
+    <h2><i class="bi bi-hdd-network text-success"></i> Backup e Restauração</h2>
+    <!-- Botão de voltar -->
+    <a href="{{ url_for('admin.configuracoes') }}" class="btn btn-secondary">
+      <i class="bi bi-arrow-left-circle"></i> Voltar para Configurações
+    </a>
+  </div>
+
+  <!-- Texto informativo fixo -->
+  <div class="card shadow-sm mb-4 border-info">
+    <div class="card-body">
+      <h5 class="card-title text-info">
+        <i class="bi bi-info-circle"></i> Importante
+      </h5>
+      <p class="mb-0">
+        Manter backups regulares garante a segurança dos dados do sistema.  
+        Aqui você pode <strong>gerar um backup</strong> completo ou <strong>restaurar</strong> um arquivo existente.  
+        Recomenda-se salvar os backups em um local seguro e externo ao servidor.
+      </p>
+    </div>
+  </div>
+
+  <div class="row">
+    <!-- Gerar Backup -->
+    <div class="col-md-6">
+      <div class="card shadow-sm mb-4">
+        <div class="card-header bg-success text-white">
+          <i class="bi bi-download"></i> Gerar Backup
+        </div>
+        <div class="card-body text-center">
+          <form method="POST" action="{{ url_for('admin.backup.gerar_backup') }}">
+            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+            <button type="submit" class="btn btn-outline-success btn-lg">
+              <i class="bi bi-download"></i> Gerar Backup
+            </button>
+          </form>
+        </div>
+      </div>
+    </div>
+
+    <!-- Restaurar Backup -->
+    <div class="col-md-6">
+      <div class="card shadow-sm mb-4">
+        <div class="card-header bg-warning text-dark">
+          <i class="bi bi-upload"></i> Restaurar Backup
+        </div>
+        <div class="card-body text-center">
+          <form method="POST" action="{{ url_for('admin.backup.restaurar_backup') }}" enctype="multipart/form-data">
+            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+            <input type="file" name="backup_file" class="form-control mb-2" required>
+            <button type="submit" class="btn btn-outline-warning btn-lg">
+              <i class="bi bi-upload"></i> Restaurar Backup
+            </button>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

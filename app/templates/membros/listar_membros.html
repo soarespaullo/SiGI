@@ -119,32 +119,6 @@
               </div>
             </td>
           </tr>
-          <!-- 🔹 Modal de confirmação de exclusão -->
-          <div class="modal fade" id="confirmDelete{{ membro.id }}" tabindex="-1" aria-labelledby="confirmDeleteLabel{{ membro.id }}" aria-hidden="true">
-            <div class="modal-dialog modal-dialog-centered">
-              <div class="modal-content">
-                <div class="modal-header bg-gradient-base">
-                  <h5 class="modal-title" id="confirmDeleteLabel{{ membro.id }}">Confirmar Exclusão</h5>
-                  <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Fechar"></button>
-                </div>
-                <div class="modal-body">
-                  Tem certeza que deseja excluir o membro <strong>{{ membro.nome }}</strong>?<br>
-                  Esta ação não poderá ser desfeita.
-                </div>
-                <div class="modal-footer">
-                  <form method="POST" action="{{ url_for('member.excluir_membro', id=membro.id) }}">
-                    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
-                    <button type="submit" class="btn btn-danger">
-                      <i class="bi bi-trash me-1"></i> Excluir
-                    </button>
-                  </form>
-                  <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
-                    <i class="bi bi-x-circle me-1"></i> Cancelar
-                  </button>
-                </div>
-              </div>
-            </div>
-          </div>
           {% endfor %}
         {% else %}
           <tr>
@@ -160,94 +134,114 @@
   {% set pagination = membros %}
   {% include "pagination/pagination.html" %}
 </div>
-
-<!-- 🔹 Modal: Link de Cadastro de Visitantes -->
-<div class="modal fade" id="visitanteLinkModal" tabindex="-1" aria-labelledby="visitanteLinkModalLabel" aria-hidden="true">
-  <div class="modal-dialog modal-dialog-centered">
-    <div class="modal-content">
-      <!-- Cabeçalho com gradiente -->
-      <div class="modal-header bg-gradient-base text-white">
-        <h5 class="modal-title" id="visitanteLinkModalLabel">
-          <i class="bi bi-person-plus me-2"></i> Link de Cadastro de Visitantes
-        </h5>
-        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Fechar"></button>
-      </div>
-
-      <div class="modal-body">
-        <p class="mb-2">Compartilhe este link para que visitantes possam se cadastrar na sua igreja:</p>
-
-	<div class="input-group mb-3">
-	  <span class="input-group-text"><i class="bi bi-link-45deg"></i></span>
-	  <input type="text" class="form-control no-edit" value="{{ visitante_link_url }}" readonly>
-	  <button class="btn btn-outline-secondary" type="button" onclick="copyLink('{{ visitante_link_url }}')">
-	    Copiar
-	  </button>
-	</div>
-
-	<!-- CSS embutido na própria página -->
-	<style>
-	  /* Campos bloqueados ficam com cursor de proibido e fundo cinza */
-	  .no-edit[readonly] {
-	    cursor: not-allowed;        /* mostra o cursor de proibido */
-	    background-color: #e9ecef;  /* fundo cinza claro */
-	    color: #6c757d;             /* texto mais apagado */
-	  }
-
-	  /* Remove qualquer efeito de foco em campos bloqueados */
-	  .no-edit[readonly]:focus {
-	    outline: none !important;
-	    box-shadow: none !important;
-	    border-color: #ced4da;
-	  }
-	</style>
-
-        <div class="d-flex align-items-center gap-2 mb-2">
-          <strong>Compartilhar via:</strong>
-          <a class="btn btn-success btn-sm d-flex align-items-center" target="_blank"
-             href="https://wa.me/?text={{ visitante_link_url | urlencode }}">
-            <i class="bi bi-whatsapp me-1"></i> WhatsApp
-          </a>
-          <button class="btn btn-primary btn-sm d-flex align-items-center" type="button" data-bs-toggle="collapse" data-bs-target="#qrCollapse" aria-expanded="false" aria-controls="qrCollapse">
-            <i class="bi bi-qr-code me-1"></i> QR Code
-          </button>
-        </div>
-
-        <div class="collapse" id="qrCollapse">
-          <div class="card card-body text-center">
-            <img class="img-fluid mx-auto d-block" style="max-width: 150px;"
-                 src="https://api.qrserver.com/v1/create-qr-code/?size=150x150&data={{ visitante_link_url | urlencode }}"
-                 alt="QR Code do link de cadastro">
-            <p class="mt-2 text-muted">📱 Escaneie o QR Code com o celular</p>
+{% endblock %}
+{% block modals %}
+  {% for membro in membros.items %}
+    <!-- 🔹 Modal de confirmação de exclusão -->
+    <div class="modal fade" id="confirmDelete{{ membro.id }}" tabindex="-1" aria-labelledby="confirmDeleteLabel{{ membro.id }}" aria-hidden="true">
+      <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+          <div class="modal-header bg-gradient-base">
+            <h5 class="modal-title" id="confirmDeleteLabel{{ membro.id }}">Confirmar Exclusão</h5>
+            <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Fechar"></button>
+          </div>
+          <div class="modal-body">
+            Tem certeza que deseja excluir o membro <strong>{{ membro.nome }}</strong>?<br>
+            Esta ação não poderá ser desfeita.
+          </div>
+          <div class="modal-footer">
+            <form method="POST" action="{{ url_for('member.excluir_membro', id=membro.id) }}">
+              <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+              <button type="submit" class="btn btn-danger">
+                <i class="bi bi-trash me-1"></i> Excluir
+              </button>
+            </form>
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+              <i class="bi bi-x-circle me-1"></i> Cancelar
+            </button>
           </div>
         </div>
       </div>
-      <div class="modal-footer">
-        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
-          <i class="bi bi-x-circle me-1"></i> Fechar
-        </button>
+    </div>
+  {% endfor %}
+
+  <!-- 🔹 Modal: Link de Cadastro de Visitantes -->
+  <div class="modal fade" id="visitanteLinkModal" tabindex="-1" aria-labelledby="visitanteLinkModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content">
+        <!-- Cabeçalho com gradiente -->
+        <div class="modal-header bg-gradient-base text-white">
+          <h5 class="modal-title" id="visitanteLinkModalLabel">
+            <i class="bi bi-person-plus me-2"></i> Link de Cadastro de Visitantes
+          </h5>
+          <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Fechar"></button>
+        </div>
+
+        <div class="modal-body">
+          <p class="mb-2">Compartilhe este link para que visitantes possam se cadastrar na sua igreja:</p>
+
+          <div class="input-group mb-3">
+            <span class="input-group-text"><i class="bi bi-link-45deg"></i></span>
+            <input type="text" class="form-control no-edit" value="{{ visitante_link_url }}" readonly>
+            <button class="btn btn-outline-secondary" type="button" onclick="copyLink('{{ visitante_link_url }}')">
+              Copiar
+            </button>
+          </div>
+
+          <!-- CSS embutido na própria página -->
+          <style>
+            .no-edit[readonly] {
+              cursor: not-allowed;
+              background-color: #e9ecef;
+              color: #6c757d;
+            }
+            .no-edit[readonly]:focus {
+              outline: none !important;
+              box-shadow: none !important;
+              border-color: #ced4da;
+            }
+          </style>
+
+          <div class="d-flex align-items-center gap-2 mb-2">
+            <strong>Compartilhar via:</strong>
+            <a class="btn btn-success btn-sm d-flex align-items-center" target="_blank"
+               href="https://wa.me/?text={{ visitante_link_url | urlencode }}">
+              <i class="bi bi-whatsapp me-1"></i> WhatsApp
+            </a>
+            <button class="btn btn-primary btn-sm d-flex align-items-center" type="button" data-bs-toggle="collapse" data-bs-target="#qrCollapse" aria-expanded="false" aria-controls="qrCollapse">
+              <i class="bi bi-qr-code me-1"></i> QR Code
+            </button>
+          </div>
+
+          <div class="collapse" id="qrCollapse">
+            <div class="card card-body text-center">
+              <img class="img-fluid mx-auto d-block" style="max-width: 150px;"
+                   src="https://api.qrserver.com/v1/create-qr-code/?size=150x150&data={{ visitante_link_url | urlencode }}"
+                   alt="QR Code do link de cadastro">
+              <p class="mt-2 text-muted">📱 Escaneie o QR Code com o celular</p>
+            </div>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+            <i class="bi bi-x-circle me-1"></i> Fechar
+          </button>
+        </div>
       </div>
     </div>
   </div>
-</div>
 
-<!-- 🔹 Script para alerta flash ao copiar -->
-<script>
-  function copyLink(text) {
-    navigator.clipboard.writeText(text).then(function() {
-      // cria um alerta flash temporário
-      const alert = document.createElement("div");
-      alert.className = "alert alert-success alert-dismissible fade show mt-2";
-      alert.role = "alert";
-      alert.innerHTML = "✅ Link copiado para a área de transferência!";
-
-      // adiciona no corpo do modal
-      document.querySelector("#visitanteLinkModal .modal-body").prepend(alert);
-
-      // remove depois de 3 segundos
-      setTimeout(() => {
-        alert.remove();
-      }, 3000);
-    });
-  }
-</script>
+  <!-- 🔹 Script para alerta flash ao copiar -->
+  <script>
+    function copyLink(text) {
+      navigator.clipboard.writeText(text).then(function() {
+        const alert = document.createElement("div");
+        alert.className = "alert alert-success alert-dismissible fade show mt-2";
+        alert.role = "alert";
+        alert.innerHTML = "✅ Link copiado para a área de transferência!";
+        document.querySelector("#visitanteLinkModal .modal-body").prepend(alert);
+        setTimeout(() => { alert.remove(); }, 3000);
+      });
+    }
+  </script>
 {% endblock %}

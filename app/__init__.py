@@ -4,6 +4,7 @@ from flask_wtf.csrf import CSRFProtect
 from flask_login import LoginManager
 from app.extensions import db, mail, migrate
 from config import get_config   # ✅ importa a função que decide o ambiente
+import pytz                     # 🔹 adicionado para timezone
 
 csrf = CSRFProtect()
 
@@ -45,6 +46,7 @@ def create_app(config_class=None):
     from app.routes.financeiro import financeiro_bp
     from app.routes.member import member_bp
     from app.routes.patrimonio import patrimonio_bp
+    from app.routes.admin import admin_bp
 
     app.register_blueprint(auth_bp)
     app.register_blueprint(dashboard_bp)
@@ -52,14 +54,35 @@ def create_app(config_class=None):
     app.register_blueprint(financeiro_bp)
     app.register_blueprint(member_bp)
     app.register_blueprint(patrimonio_bp)
-
+    app.register_blueprint(admin_bp)
+    
     # -----------------------------
-    # 📅 Context processor para ano atual
+    # 📅 Context processor para ano atual e timezone
     # -----------------------------
     @app.context_processor
     def inject_globals():
         from datetime import datetime
-        return {'current_year': datetime.now().year}
+        tz_name = os.getenv("APP_TIMEZONE", "UTC")
+        tz = pytz.timezone(tz_name)
+        return {
+            'current_year': datetime.now(tz).year,
+            'timezone': tz
+        }
+
+    # -----------------------------
+    # 🕒 Filtro Jinja para converter UTC → timezone local
+    # -----------------------------
+    @app.template_filter('to_local')
+    def to_local(dt):
+        from datetime import timezone
+        if dt is None:
+            return dt
+        # se vier naive, assume UTC
+        if dt.tzinfo is None:
+            dt = dt.replace(tzinfo=timezone.utc)
+        tz_name = os.getenv("APP_TIMEZONE", "UTC")
+        tz = pytz.timezone(tz_name)
+        return dt.astimezone(tz)
 
     # -----------------------------
     # ⚠️ Handlers globais de erro
