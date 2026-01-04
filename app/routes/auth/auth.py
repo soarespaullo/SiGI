@@ -5,8 +5,8 @@ from .forms import SetupForm, LoginForm, ForgotPasswordForm, ResetPasswordForm
 from flask_mail import Message
 from itsdangerous import URLSafeTimedSerializer, SignatureExpired, BadSignature
 from datetime import datetime
-from flask_login import login_user, logout_user   # 👈 importa funções do Flask-Login
-from utils.logs import registrar_log         	  # 👈 importa função de log
+from flask_login import login_user, logout_user, current_user   # 👈 importa também current_user
+from utils.logs import registrar_log              # 👈 importa função de log
 
 auth_bp = Blueprint('auth', __name__)
 
@@ -38,7 +38,7 @@ def setup():
         admin.set_password(form.senha.data)
         db.session.add(admin)
         db.session.commit()
-        registrar_log(admin.email, "Configuração inicial concluída", "sucesso")  # 👈 log
+        registrar_log(admin.email or "desconhecido", "Configuração inicial concluída", "sucesso")  # 👈 log seguro
         flash("Configuração concluída! Faça login.", "success")
         return redirect(url_for('auth.login'))
     elif form.is_submitted() and not form.validate_on_submit():
@@ -57,16 +57,16 @@ def login():
         if user and user.check_password(form.senha.data):
             if not getattr(user, "ativo", True):
                 flash("Usuário desativado. Entre em contato com o administrador.", "danger")
-                registrar_log(user.nome, "Tentativa de login com usuário desativado", "erro")  # 👈 log
+                registrar_log(user.email or "desconhecido", "Tentativa de login com usuário desativado", "erro")  # 👈 log seguro
                 return redirect(url_for('auth.login'))
 
             login_user(user, remember=True)
-            registrar_log(user.nome, "Login realizado", "sucesso")  # 👈 log
+            registrar_log(user.email or "desconhecido", "Login realizado", "sucesso")  # 👈 log seguro
             flash("Login realizado com sucesso!", "success")
             return redirect(url_for('dashboard.dashboard'))
         else:
             flash("E-mail ou senha inválidos.", "danger")
-            registrar_log(form.email.data, "Tentativa de login inválida", "erro")  # 👈 log
+            registrar_log(form.email.data or "desconhecido", "Tentativa de login inválida", "erro")  # 👈 log seguro
     return render_template('auth/login.html', form=form, hide_navbar=True, hide_footer=True)
 
 # ===========================
@@ -75,9 +75,8 @@ def login():
 @auth_bp.route('/logout')
 def logout():
     if hasattr(current_app, "login_manager") and current_app.login_manager._login_disabled is False:
-        from flask_login import current_user
         if current_user.is_authenticated:
-            registrar_log(current_user.nome, "Logout realizado", "sucesso")  # 👈 log
+            registrar_log(current_user.email or "desconhecido", "Logout realizado", "sucesso")  # 👈 log seguro
     logout_user()
     flash("Logout realizado com sucesso!", "info")
     return redirect(url_for('auth.login'))
@@ -108,10 +107,10 @@ def forgot_password():
 
             try:
                 mail.send(msg)
-                registrar_log(user.nome, "Solicitou redefinição de senha", "sucesso")  # 👈 log
+                registrar_log(user.email or "desconhecido", "Solicitou redefinição de senha", "sucesso")  # 👈 log seguro
             except Exception as e:
                 current_app.logger.error(f"Erro ao enviar e-mail: {e}")
-                registrar_log(user.nome, "Erro ao enviar e-mail de redefinição", "erro")  # 👈 log
+                registrar_log(user.email or "desconhecido", "Erro ao enviar e-mail de redefinição", "erro")  # 👈 log seguro
                 flash("Não foi possível enviar o e-mail agora. Tente novamente mais tarde.", "danger")
 
         flash("Se o e-mail existir, enviaremos instruções de redefinição.", "info")
@@ -141,7 +140,7 @@ def reset_password(token):
     if form.validate_on_submit():
         user.set_password(form.senha.data)
         db.session.commit()
-        registrar_log(user.nome, "Senha redefinida", "sucesso")  # 👈 log
+        registrar_log(user.email or "desconhecido", "Senha redefinida", "sucesso")  # 👈 log seguro
         flash("Senha redefinida com sucesso!", "success")
         return redirect(url_for('auth.login'))
     elif form.is_submitted() and not form.validate_on_submit():
