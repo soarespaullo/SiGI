@@ -84,44 +84,42 @@
               </div>
             </div>
 
+            <!-- RG, CPF, Nacionalidade e Naturalidade -->
             <div class="row">
-              <div class="col-md-4 mb-3">
+              <div class="col-md-3 mb-3">
                 {{ form.rg.label(class="form-label") }}
                 {{ form.rg(class="form-control", id="rg", readonly=True, placeholder="Digite o RG") }}
               </div>
-              <div class="col-md-4 mb-3">
+              <div class="col-md-3 mb-3">
                 {{ form.cpf.label(class="form-label") }}
                 {{ form.cpf(class="form-control", id="cpf", readonly=True, placeholder="Digite o CPF") }}
               </div>
-              <div class="col-md-4 mb-3">
+              <div class="col-md-3 mb-3">
                 {{ form.nacionalidade.label(class="form-label") }}
                 {{ form.nacionalidade(class="form-control", readonly=True, placeholder="Digite a nacionalidade") }}
               </div>
-            </div>
-
-            <div class="row">
-              <div class="col-md-6 mb-3">
+              <div class="col-md-3 mb-3">
                 {{ form.naturalidade.label(class="form-label") }}
                 {{ form.naturalidade(class="form-control", readonly=True, placeholder="Digite a naturalidade") }}
               </div>
-              <div class="col-md-6 mb-3">
+            </div>
+
+            <!-- Filiação, Pai e Mãe -->
+            <div class="row">
+              <div class="col-md-4 mb-3">
                 {{ form.filiacao.label(class="form-label") }}
                 {{ form.filiacao(class="form-control", readonly=True, placeholder="Digite a filiação") }}
               </div>
-            </div>
-
-            <!-- Pai e Mãe lado a lado -->
-            <div class="row">
-              <div class="col-md-6 mb-3">
+              <div class="col-md-4 mb-3">
                 {{ form.pai.label(class="form-label") }}
                 {{ form.pai(class="form-control", readonly=True, placeholder="Nome do pai") }}
               </div>
-              <div class="col-md-6 mb-3">
+              <div class="col-md-4 mb-3">
                 {{ form.mae.label(class="form-label") }}
                 {{ form.mae(class="form-control", readonly=True, placeholder="Nome da mãe") }}
               </div>
             </div>
-          </div>
+          </div> <!-- fim da aba Dados Pessoais -->
 
           <!-- Endereço -->
           <div class="tab-pane fade" id="endereco" role="tabpanel">
@@ -172,7 +170,7 @@
               </div>
             </div>
 
-            <!-- ➕ Novos campos -->
+            <!-- Novos campos -->
             <div class="row">
               <div class="col-md-4 mb-3">
                 {{ form.data_conversao.label(class="form-label") }}

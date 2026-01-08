@@ -34,11 +34,16 @@ def setup():
 
     form = SetupForm()
     if form.validate_on_submit():
-        admin = User(email=form.email.data.lower(), ativo=True)  # 🔹 admin começa ativo
+        admin = User(
+            nome=form.nome.data,                     # ✅ agora salva o nome
+            email=form.email.data.lower(),
+            ativo=True,
+            role="admin"                             # opcional: já define como admin
+        )
         admin.set_password(form.senha.data)
         db.session.add(admin)
         db.session.commit()
-        registrar_log(admin.email or "desconhecido", "Configuração inicial concluída", "sucesso")  # 👈 log seguro
+        registrar_log(admin.nome or "desconhecido", "Configuração inicial concluída", "sucesso")
         flash("Configuração concluída! Faça login.", "success")
         return redirect(url_for('auth.login'))
     elif form.is_submitted() and not form.validate_on_submit():
@@ -46,28 +51,56 @@ def setup():
 
     return render_template('auth/setup.html', form=form, hide_navbar=True, hide_footer=True)
 
+
 # ===========================
 # Rota: /auth/login
 # ===========================
 @auth_bp.route('/login', methods=['GET', 'POST'])
 def login():
+    # 🔹 Se não existe nenhum usuário configurado, força ir para setup
+    if User.query.first() is None:
+        flash("Nenhum usuário configurado. Faça a configuração inicial primeiro.", "warning")
+        return redirect(url_for('auth.setup'))
+
     form = LoginForm()
     if form.validate_on_submit():
         user = User.query.filter_by(email=form.email.data.lower()).first()
+
         if user and user.check_password(form.senha.data):
+            # Usuário existe e senha correta
             if not getattr(user, "ativo", True):
                 flash("Usuário desativado. Entre em contato com o administrador.", "danger")
-                registrar_log(user.email or "desconhecido", "Tentativa de login com usuário desativado", "erro")  # 👈 log seguro
+                registrar_log(user.nome or "desconhecido",
+                              "Tentativa de login com usuário desativado",
+                              "erro")
                 return redirect(url_for('auth.login'))
 
             login_user(user, remember=True)
-            registrar_log(user.email or "desconhecido", "Login realizado", "sucesso")  # 👈 log seguro
+            registrar_log(user.nome or "desconhecido",
+                          "Login realizado",
+                          "sucesso")
             flash("Login realizado com sucesso!", "success")
             return redirect(url_for('dashboard.dashboard'))
+
         else:
+            # Login inválido
             flash("E-mail ou senha inválidos.", "danger")
-            registrar_log(form.email.data or "desconhecido", "Tentativa de login inválida", "erro")  # 👈 log seguro
-    return render_template('auth/login.html', form=form, hide_navbar=True, hide_footer=True)
+            if user:
+                # 🔹 E-mail existe, mas senha incorreta → loga pelo nome
+                registrar_log(user.nome or "desconhecido",
+                              "Tentativa de login inválida (senha incorreta)",
+                              "erro")
+            else:
+                # 🔹 E-mail não existe → loga o e-mail informado
+                registrar_log(form.email.data.lower() or "não informado",
+                              "Tentativa de login inválida (usuário inexistente)",
+                              "erro")
+
+    return render_template('auth/login.html',
+                           form=form,
+                           hide_navbar=True,
+                           hide_footer=True)
+
 
 # ===========================
 # Rota: /auth/logout
@@ -76,7 +109,7 @@ def login():
 def logout():
     if hasattr(current_app, "login_manager") and current_app.login_manager._login_disabled is False:
         if current_user.is_authenticated:
-            registrar_log(current_user.email or "desconhecido", "Logout realizado", "sucesso")  # 👈 log seguro
+            registrar_log(current_user.nome or "desconhecido", "Logout realizado", "sucesso")  # 👈 log seguro
     logout_user()
     flash("Logout realizado com sucesso!", "info")
     return redirect(url_for('auth.login'))
@@ -107,10 +140,10 @@ def forgot_password():
 
             try:
                 mail.send(msg)
-                registrar_log(user.email or "desconhecido", "Solicitou redefinição de senha", "sucesso")  # 👈 log seguro
+                registrar_log(user.nome or "desconhecido", "Solicitou redefinição de senha", "sucesso")  # 👈 log seguro
             except Exception as e:
                 current_app.logger.error(f"Erro ao enviar e-mail: {e}")
-                registrar_log(user.email or "desconhecido", "Erro ao enviar e-mail de redefinição", "erro")  # 👈 log seguro
+                registrar_log(user.nome or "desconhecido", "Erro ao enviar e-mail de redefinição", "erro")  # 👈 log seguro
                 flash("Não foi possível enviar o e-mail agora. Tente novamente mais tarde.", "danger")
 
         flash("Se o e-mail existir, enviaremos instruções de redefinição.", "info")
@@ -140,7 +173,7 @@ def reset_password(token):
     if form.validate_on_submit():
         user.set_password(form.senha.data)
         db.session.commit()
-        registrar_log(user.email or "desconhecido", "Senha redefinida", "sucesso")  # 👈 log seguro
+        registrar_log(user.nome or "desconhecido", "Senha redefinida", "sucesso")  # 👈 log seguro
         flash("Senha redefinida com sucesso!", "success")
         return redirect(url_for('auth.login'))
     elif form.is_submitted() and not form.validate_on_submit():

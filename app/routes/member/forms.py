@@ -22,7 +22,6 @@ class MemberForm(FlaskForm):
     bairro = StringField("Bairro", validators=[Optional()])
     cep = StringField("CEP", validators=[Optional()])
 
-    # ✅ Ajuste: agora retornam True/False
     batizado = SelectField(
         "Batizado",
         coerce=lambda v: v == "True",
@@ -42,7 +41,8 @@ class MemberForm(FlaskForm):
         ("Membro", "Membro"),
         ("Diácono", "Diácono"),
         ("Presbítero", "Presbítero"),
-        ("Pastor", "Pastor")
+        ("Pastor", "Pastor"),
+        ("Visitante", "Visitante")   # ✅ nova opção adicionada
     ], validators=[Optional()])
 
     status = SelectField("Status", choices=[("Ativo", "Ativo"), ("Inativo", "Inativo")], validators=[Optional()])

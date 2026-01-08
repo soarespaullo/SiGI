@@ -6,15 +6,16 @@ from flask import (
     Blueprint, render_template, request, redirect, url_for,
     flash, current_app, make_response, Response
 )
-from flask_login import login_required
+from flask_login import login_required, current_user
 from werkzeug.utils import secure_filename
 from werkzeug.datastructures import CombinedMultiDict
 from sqlalchemy import func
 from weasyprint import HTML  # ➕ para gerar PDF
 
 from utils.pagination import paginate_query
-from app.models import Member, PublicLink   # 👈 importa os modelos
-from app.routes.member.forms import MemberForm   # 👈 importa o formulário do lugar certo
+from app.models import Member, PublicLink        # 👈 importa os modelos
+from app.models.log import Log, registrar_log    # 👈 modelo de log
+from app.routes.member.forms import MemberForm   # 👈 formulário
 from app.extensions import db
 
 
@@ -81,12 +82,13 @@ def buscar_membros():
             flash(f"{membros.total} membro(s) encontrado(s)", "info")
 
     return render_template("membros/listar_membros.html", membros=membros, termo=termo)
+    
 
 # -----------------------------
 # ➕ Cadastro de Membros
 # -----------------------------
 @member_bp.route("/cadastro", methods=["GET", "POST"])
-@login_required   # 👈 protege a rota
+@login_required
 def cadastro_membro():
     form = MemberForm(CombinedMultiDict([request.form, request.files]))
     if request.method == "POST" and form.validate_on_submit():
@@ -135,6 +137,7 @@ def cadastro_membro():
             data_saida=form.data_saida.data
         )
 
+        # Upload da foto
         foto_file = form.foto.data
         if foto_file:
             filename = secure_filename(foto_file.filename)
@@ -147,15 +150,20 @@ def cadastro_membro():
         db.session.add(membro)
         db.session.commit()
         flash("Membro cadastrado com sucesso!", "success")
+
+        # Registrar log com nome do membro
+        registrar_log(current_user.nome, f"Cadastro de Membro: {membro.nome}")
+
         return redirect(url_for("member.listar_membros"))
 
     return render_template("membros/cadastro_membro.html", form=form)
+
 
 # -----------------------------
 # ✏️ Edição de Membros
 # -----------------------------
 @member_bp.route("/editar/<int:id>", methods=["GET", "POST"])
-@login_required   # 👈 protege a rota
+@login_required
 def editar_membro(id):
     membro = Member.query.get_or_404(id)
     form = MemberForm(CombinedMultiDict([request.form, request.files]), obj=membro)
@@ -195,6 +203,7 @@ def editar_membro(id):
         membro.data_conversao = form.data_conversao.data or membro.data_conversao
         membro.data_saida = form.data_saida.data or membro.data_saida
 
+        # Upload da foto
         foto_file = form.foto.data
         if foto_file:
             filename = secure_filename(foto_file.filename)
@@ -209,21 +218,33 @@ def editar_membro(id):
 
         db.session.commit()
         flash("Membro atualizado com sucesso!", "success")
+
+        # Registrar log com nome do membro
+        registrar_log(current_user.nome, f"Edição de Membro: {membro.nome}")
+
         return redirect(url_for("member.listar_membros"))
 
     return render_template("membros/editar_membro.html", form=form, membro=membro)
+
 
 # -----------------------------
 # ❌ Exclusão de Membros
 # -----------------------------
 @member_bp.route("/excluir/<int:id>", methods=["POST"])
-@login_required   # 👈 protege a rota
+@login_required
 def excluir_membro(id):
     membro = Member.query.get_or_404(id)
+    nome_membro = membro.nome   # 👈 guarda o nome antes de excluir
+
     db.session.delete(membro)
     db.session.commit()
     flash("Membro excluído com sucesso!", "info")
+
+    # Registrar log com nome do membro
+    registrar_log(current_user.nome, f"Exclusão de Membro: {nome_membro}")
+
     return redirect(url_for("member.listar_membros"))
+
 
 
 # -----------------------------
@@ -452,6 +473,7 @@ def relatorio_membros_pdf():
         headers={"Content-Disposition": "inline; filename=relatorio_membros.pdf"}
     )
 
+
 # -----------------------------
 # 🌐 Cadastro público de visitante
 # -----------------------------
@@ -472,14 +494,13 @@ def cadastro_visitante(hash):
         sexo = request.form.get("sexo")
         estado_civil = request.form.get("estado_civil")
         conjuge = request.form.get("conjuge") if estado_civil == "Casado" else None
-        frequenta = request.form.get("frequenta")
         endereco = request.form.get("endereco")
         bairro = request.form.get("bairro")
-        naturalidade = request.form.get("naturalidade")   # 👈 ainda pega do form
+        naturalidade = request.form.get("naturalidade")
         cep = request.form.get("cep")
         observacoes = request.form.get("observacoes")
 
-        # 🔒 Converte data de nascimento para objeto date (compatível MySQL/SQLite)
+        # 🔒 Converte data de nascimento para objeto date
         data_nascimento = None
         if data_nascimento_str:
             try:
@@ -487,23 +508,18 @@ def cadastro_visitante(hash):
             except ValueError:
                 data_nascimento = None
 
-        # 🔒 Validação obrigatória
-        if not nome or not telefone:
-            flash("Nome e Telefone são obrigatórios!", "danger")
-            return redirect(url_for("member.cadastro_visitante", hash=hash))
-
         # 🚫 Verifica duplicidade (mesmo nome+telefone OU mesmo email)
         conditions = [
             and_(Member.nome == nome, Member.telefone == telefone)
         ]
-        if email:  # só verifica email se informado
+        if email:
             conditions.append(Member.email == email)
 
         existente = Member.query.filter(or_(*conditions)).first()
 
         if existente:
-            flash("Este visitante já está cadastrado no sistema!", "warning")
-            return redirect(url_for("member.cadastro_visitante", hash=hash))
+            # 👉 se já existe, apenas volta para o formulário sem cadastrar de novo
+            return render_template("membros/cadastro_visitante.html", form=form, hash=hash)
 
         # ✅ Se não existe, cria novo visitante
         visitante = Member(
@@ -516,22 +532,25 @@ def cadastro_visitante(hash):
             conjuge=conjuge,
             endereco=endereco,
             bairro=bairro,
-            naturalidade=naturalidade,  # 👈 ajuste: salva em naturalidade
+            naturalidade=naturalidade,
             cep=cep,
             observacoes=observacoes,
-            funcao="Visitante",          # 👈 marca como visitante
-            status="Ativo",              # 👈 status padrão
+            funcao="Visitante",
+            status="Ativo",
             data_cadastro=datetime.utcnow()
         )
         db.session.add(visitante)
         db.session.commit()
 
+        # ➕ Registrar log
+        registrar_log(nome, f"Cadastro público de visitante: {nome}")
+
         # 👉 após cadastrar, renderiza a tela de sucesso
         return render_template("membros/success.html", visitante=visitante, hash=hash)
 
-    # ✅ se GET, renderiza o formulário estilizado e passa o form + hash
+    # ✅ se GET, renderiza o formulário estilizado
     return render_template("membros/cadastro_visitante.html", form=form, hash=hash)
-    
+
     
 # -----------------------------
 # 📄 Relatório em PDF de Aniversariantes

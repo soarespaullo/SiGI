@@ -47,7 +47,7 @@ def novo_evento():
 
         db.session.add(evento)
         db.session.commit()
-        registrar_log(current_user.email, f"Criou evento: {evento.titulo}", "sucesso")  # 👈 log
+        registrar_log(current_user.nome, f"Criou evento: {evento.titulo}", "sucesso")  # 👈 log
         flash("Evento criado com sucesso!", "success")
         return redirect(url_for("event.listar_eventos"))
     return render_template("eventos/novo_evento.html", form=form)
@@ -77,7 +77,7 @@ def editar_evento(id):
             evento.token_expira_em = evento.data_fim
 
         db.session.commit()
-        registrar_log(current_user.email, f"Editou evento: {evento.titulo}", "sucesso")  # 👈 log
+        registrar_log(current_user.nome, f"Editou evento: {evento.titulo}", "sucesso")  # 👈 log
         flash("Evento atualizado com sucesso!", "success")
         return redirect(url_for("event.listar_eventos"))
     return render_template("eventos/editar_evento.html", form=form, evento=evento)
@@ -91,7 +91,7 @@ def excluir_evento(id):
     evento = Evento.query.get_or_404(id)
     db.session.delete(evento)
     db.session.commit()
-    registrar_log(current_user.email, f"Excluiu evento: {evento.titulo}", "sucesso")  # 👈 log
+    registrar_log(current_user.nome, f"Excluiu evento: {evento.titulo}", "sucesso")  # 👈 log
     flash("Evento excluído com sucesso!", "success")
     return redirect(url_for("event.listar_eventos"))
 
@@ -166,7 +166,7 @@ def enviar_lembretes_eventos():
             html=html_body
         )
         mail.send(msg)
-        registrar_log(current_user.email, f"Enviou lembrete do evento: {ev.titulo}", "sucesso")  # 👈 log
+        registrar_log(current_user.nome, f"Enviou lembrete do evento: {ev.titulo}", "sucesso")  # 👈 log
         print(f"Lembrete enviado para evento: {ev.titulo}")
 
     flash("Lembretes enviados com sucesso!", "success")

@@ -1,0 +1,108 @@
+{% extends "base.html" %}
+{% block title %}Meu Perfil{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+
+  <!-- Botão de voltar -->
+  <div class="mb-3 d-flex justify-content-end">
+    <a href="{{ url_for('dashboard.dashboard') }}" class="btn btn-secondary" title="Voltar para Dashboard">
+      <i class="bi bi-arrow-left-circle"></i>
+    </a>
+  </div>
+
+  <!-- Título sem ícone -->
+  <h2><i class="bi bi-person text-primary me-2"></i> Meu Perfil</h2>
+
+  <div class="row mt-3">
+    <!-- Coluna esquerda: informações -->
+    <div class="col-md-6">
+      <div class="card shadow-sm border-0 mb-4">
+        <div class="card-header bg-primary text-white">
+          <i class="bi bi-info-circle"></i> Informações do Usuário
+        </div>
+        <div class="card-body text-center">
+          {% if usuario.foto %}
+            <img src="{{ url_for('static', filename='uploads/' ~ usuario.foto) }}" 
+                 alt="Foto de Perfil"
+                 style="width:160px; height:160px; object-fit:cover; border-radius:50%; border:4px solid #0d6efd; 
+                        box-shadow:0 4px 8px rgba(0,0,0,0.3); margin-bottom:15px;">
+          {% else %}
+            <!-- Avatar circular sem foto -->
+            <div style="width:160px; height:160px; border-radius:50%; border:4px solid #dee2e6;
+                        display:inline-flex; align-items:center; justify-content:center;
+                        box-shadow:0 4px 8px rgba(0,0,0,0.2); background-color:#f8f9fa; margin-bottom:15px;">
+              <i class="bi bi-person" style="font-size:5rem; color:#6c757d;"></i>
+            </div>
+          {% endif %}
+
+          <p><strong>Nome:</strong> {{ usuario.nome }}</p>
+          <p><strong>Email:</strong> {{ usuario.email }}</p>
+          <p><strong>Nível:</strong>
+            {% if usuario.role == 'admin' %}
+              <span class="badge bg-danger">Administrador</span>
+            {% elif usuario.role == 'user' %}
+              <span class="badge bg-primary">Usuário</span>
+            {% else %}
+              <span class="badge bg-secondary">{{ usuario.role }}</span>
+            {% endif %}
+          </p>
+          <p><strong>Status:</strong>
+            {% if usuario.ativo %}
+              <span class="badge bg-success">Ativo</span>
+            {% else %}
+              <span class="badge bg-danger">Inativo</span>
+            {% endif %}
+          </p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Coluna direita: alterar senha -->
+    <div class="col-md-6">
+      <div class="card shadow-sm border-0 mb-4">
+        <div class="card-header bg-warning text-dark">
+          <i class="bi bi-shield-lock"></i> Alterar Senha
+        </div>
+        <div class="card-body">
+          <form method="POST" action="{{ url_for('perfil.alterar_senha') }}" autocomplete="off">
+            {{ form.hidden_tag() }}
+
+            <!-- Senha atual -->
+            <div class="mb-3">
+              {{ form.senha_atual.label(class="form-label") }}
+              {{ form.senha_atual(class="form-control" + (" is-invalid" if form.senha_atual.errors else ""), type="password", placeholder="Digite sua senha atual") }}
+              {% for error in form.senha_atual.errors %}
+                <div class="text-danger small">{{ error }}</div>
+              {% endfor %}
+            </div>
+
+            <!-- Nova senha -->
+            <div class="mb-3">
+              {{ form.nova_senha.label(class="form-label") }}
+              {{ form.nova_senha(class="form-control" + (" is-invalid" if form.nova_senha.errors else ""), type="password", placeholder="Nova senha") }}
+              {% for error in form.nova_senha.errors %}
+                <div class="text-danger small">{{ error }}</div>
+              {% endfor %}
+            </div>
+
+            <!-- Confirmar nova senha -->
+            <div class="mb-3">
+              {{ form.confirmar_senha.label(class="form-label") }}
+              {{ form.confirmar_senha(class="form-control" + (" is-invalid" if form.confirmar_senha.errors else ""), type="password", placeholder="Confirme a nova senha") }}
+              {% for error in form.confirmar_senha.errors %}
+                <div class="text-danger small">{{ error }}</div>
+              {% endfor %}
+            </div>
+
+            <!-- Botão -->
+            <button type="submit" class="btn btn-warning">
+              <i class="bi bi-check-circle"></i> Alterar Senha
+            </button>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

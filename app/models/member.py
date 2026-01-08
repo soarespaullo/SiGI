@@ -1,6 +1,6 @@
 from app.extensions import db   # ✅ importa o db único centralizado em app/extensions.py
 import secrets
-from datetime import datetime
+from datetime import datetime, date
 
 # -----------------------------
 # 👥 Membros da Igreja
@@ -39,6 +39,7 @@ class Member(db.Model):
     # ➕ Novos campos
     data_conversao = db.Column(db.Date, nullable=True)
     data_saida = db.Column(db.Date, nullable=True)
+    visitante = db.Column(db.Boolean, default=False)   # ✅ novo campo
 
     # Documentos
     nacionalidade = db.Column(db.String(50))
@@ -51,6 +52,22 @@ class Member(db.Model):
 
     # Observações
     observacoes = db.Column(db.Text)
+
+    @property
+    def idade(self):
+        """Calcula a idade com base na data de nascimento."""
+        if self.data_nascimento:
+            hoje = date.today()
+            anos = hoje.year - self.data_nascimento.year
+            if (hoje.month, hoje.day) < (self.data_nascimento.month, self.data_nascimento.day):
+                anos -= 1
+            return anos
+        return None
+
+    @property
+    def ativo(self):
+        """Retorna False se tiver data de saída, True caso contrário."""
+        return self.data_saida is None
 
     def __repr__(self):
         return f"<Member {self.nome}>"
@@ -69,7 +86,6 @@ class PublicLink(db.Model):
 
     @staticmethod
     def gerar_hash():
-        # Gera uma string hex segura de 32 caracteres
         return secrets.token_hex(16)
 
     def __repr__(self):

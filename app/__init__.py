@@ -46,7 +46,8 @@ def create_app(config_class=None):
     from app.routes.financeiro import financeiro_bp
     from app.routes.member import member_bp
     from app.routes.patrimonio import patrimonio_bp
-    from app.routes.admin import admin_bp
+    from app.routes.configuracoes import config_bp
+    from app.routes.perfil.perfil import perfil_bp
 
     app.register_blueprint(auth_bp)
     app.register_blueprint(dashboard_bp)
@@ -54,7 +55,8 @@ def create_app(config_class=None):
     app.register_blueprint(financeiro_bp)
     app.register_blueprint(member_bp)
     app.register_blueprint(patrimonio_bp)
-    app.register_blueprint(admin_bp)
+    app.register_blueprint(config_bp)
+    app.register_blueprint(perfil_bp)
     
     # -----------------------------
     # 📅 Context processor para ano atual e timezone

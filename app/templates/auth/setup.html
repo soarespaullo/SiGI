@@ -20,18 +20,32 @@
     <!-- Formulário -->
     <form method="POST" class="login-form">
       {{ form.hidden_tag() }}
+
+      <!-- Nome -->
       <div class="form-floating mb-3">
-        {{ form.email(class="form-control", placeholder="Digite seu e-mail", autofocus=True) }}
+        {{ form.nome(class="form-control", placeholder="Digite seu nome", autofocus=True) }}
+        <label for="nome">Nome</label>
+      </div>
+
+      <!-- Email -->
+      <div class="form-floating mb-3">
+        {{ form.email(class="form-control", placeholder="Digite seu e-mail") }}
         <label for="email">E-mail</label>
       </div>
+
+      <!-- Senha -->
       <div class="form-floating mb-3">
         {{ form.senha(class="form-control", placeholder="Crie uma senha segura") }}
         <label for="senha">Senha</label>
       </div>
+
+      <!-- Confirmar senha -->
       <div class="form-floating mb-3">
         {{ form.confirmar_senha(class="form-control", placeholder="Confirme a senha") }}
         <label for="confirmar_senha">Confirmar senha</label>
       </div>
+
+      <!-- Botão -->
       <button type="submit" class="btn btn-login w-100 btn-lg">Configurar</button>
     </form>
 

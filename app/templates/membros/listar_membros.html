@@ -18,6 +18,11 @@
     </div>
   </div>
 
+  <!-- Mensagem de topo -->
+  <p class="text-muted mb-3">
+    <i class="bi bi-info-circle me-1"></i> Aqui estão todos os membros cadastrados em sua igreja
+  </p>
+
   <!-- Campo de busca -->
   <form class="d-flex align-items-center mb-2 gap-2" style="max-width: 600px;" method="get" action="{{ url_for('member.buscar_membros') }}">
     <input name="q" id="searchInput" type="text" class="form-control" 
@@ -27,7 +32,6 @@
       <span>Buscar</span>
     </button>
   </form>
-
   <div class="table-responsive shadow-sm">
     <table class="table table-striped table-hover align-middle">
       <thead class="table-primary">
@@ -130,11 +134,20 @@
       </tbody>
     </table>
   </div>
+
+  <!-- Contador de registros -->
+  <!-- Contador de registros -->
+  {% if membros.items %}
+    <p class="mt-2 text-muted">
+       {{ membros.items|length }} registros nesta página
+    </p>
+  {% endif %}
   <!-- 🔹 Inclusão da paginação -->
   {% set pagination = membros %}
   {% include "pagination/pagination.html" %}
 </div>
 {% endblock %}
+
 {% block modals %}
   {% for membro in membros.items %}
     <!-- 🔹 Modal de confirmação de exclusão -->

@@ -1,0 +1,58 @@
+{% extends "base.html" %}
+{% block title %}Editar Perfil{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+  <h2><i class="bi bi-pencil-square text-primary"></i> Editar Perfil</h2>
+
+  <div class="card shadow-sm border-0 mt-3">
+    <div class="card-body">
+      <form method="POST" autocomplete="off">
+        {{ form.hidden_tag() }}
+
+        <!-- Nome -->
+        <div class="mb-3">
+          {{ form.nome.label(class="form-label") }}
+          {{ form.nome(class="form-control" + (" is-invalid" if form.nome.errors else ""), placeholder="Digite seu nome completo") }}
+          {% for error in form.nome.errors %}
+            <div class="text-danger small">{{ error }}</div>
+          {% endfor %}
+        </div>
+
+        <!-- Email -->
+        <div class="mb-3">
+          {{ form.email.label(class="form-label") }}
+          {{ form.email(class="form-control" + (" is-invalid" if form.email.errors else ""), placeholder="Digite seu email") }}
+          {% for error in form.email.errors %}
+            <div class="text-danger small">{{ error }}</div>
+          {% endfor %}
+        </div>
+
+        <!-- Status -->
+        <div class="mb-3">
+          {{ form.ativo.label(class="form-label") }}
+          {{ form.ativo(class="form-select" + (" is-invalid" if form.ativo.errors else "")) }}
+          {% for error in form.ativo.errors %}
+            <div class="text-danger small">{{ error }}</div>
+          {% endfor %}
+        </div>
+
+        <!-- Nível -->
+        <div class="mb-3">
+          {{ form.role.label(class="form-label") }}
+          {{ form.role(class="form-select" + (" is-invalid" if form.role.errors else "")) }}
+          {% for error in form.role.errors %}
+            <div class="text-danger small">{{ error }}</div>
+          {% endfor %}
+        </div>
+
+        <!-- Botões -->
+        {{ form.submit(class="btn btn-success") }}
+        <a href="{{ url_for('perfil.meu_perfil') }}" class="btn btn-secondary">
+          <i class="bi bi-x-circle"></i> Cancelar
+        </a>
+      </form>
+    </div>
+  </div>
+</div>
+{% endblock %}

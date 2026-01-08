@@ -17,6 +17,7 @@ class LoginForm(FlaskForm):
 # Usado quando configuramos o primeiro usuário/admin
 # ===========================
 class SetupForm(FlaskForm):
+    nome = StringField("Nome", validators=[DataRequired()])	# ✅ novo campo
     email = StringField("Email", validators=[DataRequired(), Email()])
     senha = PasswordField("Senha", validators=[
         DataRequired(),

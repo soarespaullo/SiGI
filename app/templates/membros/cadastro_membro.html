@@ -55,6 +55,7 @@
                 {{ form.estado_civil(class="form-select", id="estadoCivil") }}
               </div>
             </div>
+
             <!-- Linha com Cônjuge, Telefone e Email -->
             <div class="row">
               <div class="col-md-4 mb-3" id="conjugeField" style="display:none;">
@@ -70,45 +71,42 @@
                 {{ form.email(class="form-control", placeholder="Digite o e-mail") }}
               </div>
             </div>
-
-            <!-- RG continua na linha seguinte -->
+            <!-- RG, CPF, Nacionalidade e Naturalidade -->
             <div class="row">
-              <div class="col-md-4 mb-3">
+              <div class="col-md-3 mb-3">
                 {{ form.rg.label(class="form-label") }}
                 {{ form.rg(class="form-control", id="rg", placeholder="Digite o RG") }}
               </div>
-              <div class="col-md-4 mb-3">
+              <div class="col-md-3 mb-3">
                 {{ form.cpf.label(class="form-label") }}
                 {{ form.cpf(class="form-control", id="cpf", placeholder="Digite o CPF") }}
               </div>
-              <div class="col-md-4 mb-3">
+              <div class="col-md-3 mb-3">
                 {{ form.nacionalidade.label(class="form-label") }}
-                {{ form.nacionalidade(class="form-control",  placeholder="Digite a nacionalidade") }}
+                {{ form.nacionalidade(class="form-control", placeholder="Digite a nacionalidade") }}
+              </div>
+              <div class="col-md-3 mb-3">
+                {{ form.naturalidade.label(class="form-label") }}
+                {{ form.naturalidade(class="form-control", placeholder="Digite a naturalidade") }}
               </div>
             </div>
 
+            <!-- Filiação, Pai e Mãe -->
             <div class="row">
-              <div class="col-md-6 mb-3">
-                {{ form.naturalidade.label(class="form-label") }}
-                {{ form.naturalidade(class="form-control",  placeholder="Digite a naturalidade") }}
-              </div>
-              <div class="col-md-6 mb-3">
+              <div class="col-md-4 mb-3">
                 {{ form.filiacao.label(class="form-label") }}
                 {{ form.filiacao(class="form-control", placeholder="Digite a filiação") }}
               </div>
-            </div>
-
-            <div class="row">
-              <div class="col-md-6 mb-3">
+              <div class="col-md-4 mb-3">
                 {{ form.pai.label(class="form-label") }}
                 {{ form.pai(class="form-control", placeholder="Nome do pai") }}
               </div>
-              <div class="col-md-6 mb-3">
+              <div class="col-md-4 mb-3">
                 {{ form.mae.label(class="form-label") }}
                 {{ form.mae(class="form-control", placeholder="Nome da mãe") }}
               </div>
             </div>
-          </div>
+          </div> <!-- fim da aba Dados Pessoais -->
 
           <!-- Endereço -->
           <div class="tab-pane fade" id="endereco" role="tabpanel">
@@ -127,7 +125,6 @@
               </div>
             </div>
           </div>
-
           <!-- Eclesiástico -->
           <div class="tab-pane fade" id="eclesiastico" role="tabpanel">
             <div class="row">
@@ -160,7 +157,7 @@
               </div>
             </div>
 
-            <!-- Novos campos adicionados (mantendo estrutura) -->
+            <!-- Novos campos -->
             <div class="row">
               <div class="col-md-4 mb-3">
                 {{ form.data_conversao.label(class="form-label") }}
@@ -175,11 +172,11 @@
             <div class="row">
               <div class="col-md-4 mb-3">
                 {{ form.numero_carteira.label(class="form-label") }}
-                {{ form.numero_carteira(class="form-control" , placeholder="Número da carteira") }}
+                {{ form.numero_carteira(class="form-control", placeholder="Número da carteira") }}
               </div>
               <div class="col-md-4 mb-3">
                 {{ form.igreja_local.label(class="form-label") }}
-                {{ form.igreja_local(class="form-control" , placeholder="Digite a igreja local") }}
+                {{ form.igreja_local(class="form-control", placeholder="Digite a igreja local") }}
               </div>
               <div class="col-md-4 mb-3">
                 {{ form.validade.label(class="form-label") }}
@@ -212,9 +209,7 @@
 </div>
 
 <!-- JavaScript inline -->
-<!-- jQuery necessário para o jQuery Mask funcionar -->
 <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
-<!-- Plugin de máscara -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.mask/1.14.16/jquery.mask.min.js"></script>
 <script>
 // Mostrar/ocultar campo de cônjuge
@@ -224,7 +219,7 @@ document.getElementById("estadoCivil").addEventListener("change", function() {
   field.style.display = (this.value === "Casado") ? "block" : "none";
 });
 
-// Aplicar máscaras (executa após o DOM e jQuery estarem prontos)
+// Aplicar máscaras
 $(function(){
   $('#telefone').mask('(00) 00000-0000');
   $('#cpf').mask('000.000.000-00');

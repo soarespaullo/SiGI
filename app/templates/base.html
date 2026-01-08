@@ -129,16 +129,25 @@
               <li class="nav-item dropdown">
                 <a class="nav-link dropdown-toggle d-flex align-items-center" href="#" id="navbarDropdownPerfil" role="button"
                    data-bs-toggle="dropdown" aria-expanded="false">
-                  <i class="bi bi-person-circle me-1"></i> Perfil
+
+                  {% if current_user.foto %}
+                    <img src="{{ url_for('static', filename='uploads/' ~ current_user.foto) }}"
+                         alt="Foto de {{ current_user.nome }}"
+                         style="width:32px; height:32px; object-fit:cover; border-radius:50%; border:2px solid #0d6efd; margin-right:8px;">
+                  {% else %}
+                    <i class="bi bi-person-circle me-2" style="font-size:1.5rem;"></i>
+                  {% endif %}
+
+                  <span>{{ current_user.nome }}</span>
                 </a>
                 <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdownPerfil">
                   <li>
-                    <a class="dropdown-item" href="{{ url_for('admin.configuracoes') }}">
+                    <a class="dropdown-item" href="{{ url_for('configuracoes.configuracoes') }}">
                       <i class="bi bi-gear me-1"></i> Configurações Gerais
                     </a>
                   </li>
                   <li>
-                    <a class="dropdown-item" href="#">
+                    <a class="dropdown-item" href="{{ url_for('perfil.meu_perfil') }}">
                       <i class="bi bi-person-lines-fill me-1"></i> Meu Perfil
                     </a>
                   </li>
@@ -196,7 +205,6 @@
         <a href="https://github.com/soarespaullo" target="_blank">Paulo Soares</a>
       </div>
     </footer>
-
     {% endif %}
 
     <!-- Bloco para modais -->

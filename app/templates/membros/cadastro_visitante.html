@@ -6,6 +6,11 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     
+    <!-- Favicons -->
+    <link rel="icon" type="image/png" sizes="32x32" href="{{ url_for('static', filename='img/favicon/favicon-32x32.png') }}">
+    <link rel="icon" type="image/png" sizes="16x16" href="{{ url_for('static', filename='img/favicon/favicon-16x16.png') }}">
+    <link rel="shortcut icon" href="{{ url_for('static', filename='img/favicon/favicon.ico') }}">
+    
     <!-- Open Graph meta tags para compartilhamento -->
     <meta property="og:title" content="Cadastro de Visitante - SiGI" />
     <meta property="og:description" content="Preencha seus dados para nos conhecermos melhor." />
@@ -15,13 +20,13 @@
     <meta property="og:url" content="{{ request.url }}" />
     <meta property="og:type" content="website" />
 
-    <!-- Twitter Cards (também funcionam em WhatsApp) -->
+    <!-- Twitter Cards -->
     <meta name="twitter:card" content="summary_large_image" />
     <meta name="twitter:title" content="Cadastro de Visitante - SiGI" />
     <meta name="twitter:description" content="Preencha seus dados para nos conhecermos melhor." />
     <meta name="twitter:image" content="{{ url_for('static', filename='img/cadastro.png', _external=True) }}" />
 
-    <title>Cadastro de Visitante - Igreja</title>
+    <title>Cadastro de Visitante - SiGI</title>
 
     <!-- Bootstrap CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@3.4.1/dist/css/bootstrap.min.css" rel="stylesheet">
@@ -164,15 +169,6 @@
                             <label>Nome do Cônjuge</label>
                             <input type="text" class="form-control" name="conjuge">
                         </div>
-
-                        <div class="form-group">
-                            <label>Você frequenta outra igreja?</label>
-                            <select class="form-control" name="frequenta">
-                                <option value="primeira_vez">Não, é minha primeira vez em uma igreja evangélica</option>
-                                <option value="outra_igreja">Sim, sou de outra igreja evangélica (visitante)</option>
-                            </select>
-                        </div>
-
                         <h4 class="section-title"><i class="fa fa-map-marker"></i> Endereço <small>(opcional)</small></h4>
 
                         <div class="form-group">
@@ -184,13 +180,13 @@
                             <div class="col-md-6">
                                 <div class="form-group">
                                     <label>Bairro</label>
-                                    <input type="text" class="form-control" name="bairro">
+                                    <input type="text" class="form-control" name="bairro" placeholder="Digite seu Bairro">
                                 </div>
                             </div>
                             <div class="col-md-6">
                                 <div class="form-group">
                                     <label>Naturalidade</label>
-                                    <input type="text" class="form-control" name="naturalidade">
+                                    <input type="text" class="form-control" name="naturalidade" placeholder="Local onde Mora">
                                 </div>
                             </div>
                         </div>
@@ -203,6 +199,7 @@
                                 </div>
                             </div>
                         </div>
+
                         <h4 class="section-title"><i class="fa fa-comment"></i> Observações <small>(opcional)</small></h4>
 
                         <div class="form-group">
@@ -216,7 +213,6 @@
                         </button>
                     </form>
                 </div>
-
                 <p class="footer-text">
                     <i class="fa fa-lock"></i> Seus dados estão seguros e serão usados apenas pela igreja.
                 </p>
