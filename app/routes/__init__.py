@@ -5,7 +5,8 @@ from .financeiro import financeiro_bp
 from .member import member_bp
 from .patrimonio import patrimonio_bp
 from .configuracoes import config_bp
-from .perfil.perfil import perfil_bp 
+from .perfil.perfil import perfil_bp
+from .documentos import documentos_bp
 
 __all__ = [
     "auth_bp",
@@ -15,5 +16,6 @@ __all__ = [
     "member_bp",
     "patrimonio_bp",
     "config_bp",
-    "perfil_bp",  
+    "perfil_bp",
+    "documentos_bp",
 ]

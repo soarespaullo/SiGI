@@ -19,10 +19,9 @@ def listar_eventos():
 
     eventos = Evento.query.order_by(Evento.data_inicio.asc()).paginate(page=page, per_page=10)
 
-    if eventos.total == 0:
-        flash("Nenhum evento encontrado", "warning")
-
+    # 👉 não dispara flash aqui, o template já mostra mensagem quando não há eventos
     return render_template("eventos/listar_eventos.html", eventos=eventos)
+    
 
 # -----------------------------
 # ➕ Criar novo evento
@@ -118,13 +117,14 @@ def buscar_eventos():
     # 🔹 Só mostra mensagem se realmente houve busca
     if termo:
         if eventos.total == 0:
-            flash("Nenhum evento encontrado", "warning")
+            flash("Nenhum evento corresponde ao termo pesquisado", "warning")
         elif eventos.total == 1:
             flash("1 evento encontrado", "info")
         else:
-            flash(f"{eventos.total} evento(s) encontrado(s)", "info")
+            flash(f"{eventos.total} evento(s) encontrados", "info")
 
     return render_template("eventos/listar_eventos.html", eventos=eventos, termo=termo)
+
 
 # -----------------------------
 # 📧 Enviar lembretes de eventos próximos

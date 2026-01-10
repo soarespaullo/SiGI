@@ -96,6 +96,31 @@
                 </ul>
               </li>
 
+              <!-- Documentos -->
+              <li class="nav-item dropdown">
+                <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownDocumentos" role="button"
+                   data-bs-toggle="dropdown" aria-expanded="false">
+                  <i class="bi bi-file-earmark-text me-1"></i> Documentos
+                </a>
+                <ul class="dropdown-menu" aria-labelledby="navbarDropdownDocumentos">
+                  <li>
+                    <a class="dropdown-item" href="{{ url_for('documentos.listar_atas') }}">
+                      <i class="bi bi-journal-text me-1"></i> Atas
+                    </a>
+                  </li>
+                  <li>
+                    <a class="dropdown-item" href="#">
+                      <i class="bi bi-award me-1"></i> Certificados
+                    </a>
+                  </li>
+                  <li>
+                    <a class="dropdown-item" href="#">
+                      <i class="bi bi-envelope me-1"></i> Cartas
+                    </a>
+                  </li>
+                </ul>
+              </li>
+
               <!-- Patrimônio -->
               <li class="nav-item dropdown">
                 <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownPatrimonio" role="button"
@@ -123,7 +148,6 @@
                 </a>
               </li>
             </ul>
-
             <!-- Perfil / Configuração -->
             <ul class="navbar-nav ms-auto">
               <li class="nav-item dropdown">

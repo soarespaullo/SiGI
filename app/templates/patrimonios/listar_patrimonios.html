@@ -10,6 +10,11 @@
       <i class="bi bi-plus-circle me-1"></i> Novo Patrimônio
     </a>
   </div>
+  
+  <!-- Mensagem de topo -->
+  <p class="text-muted mb-3">
+    <i class="bi bi-info-circle me-1"></i> Aqui estão todos os patrimônios cadastrados em sua igreja
+  </p>
 
   <!-- Campo de busca -->
   <form class="d-flex align-items-center mb-2 gap-2" style="max-width: 600px;" method="get" action="{{ url_for('patrimonio.buscar_patrimonios') }}">
@@ -84,7 +89,13 @@
       </tbody>
     </table>
   </div>
-
+ 
+  <!-- Contador de registros de patrimônio -->
+  {% if patrimonios.items %}
+    <p class="mt-2 text-muted">
+       {{ patrimonios.items|length }} patrimônios nesta página
+    </p>
+  {% endif %}
   <!-- 🔹 Inclusão da paginação -->
   {% if patrimonios.pages > 1 %}
     {% set pagination = patrimonios %}

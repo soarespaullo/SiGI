@@ -48,6 +48,7 @@ def create_app(config_class=None):
     from app.routes.patrimonio import patrimonio_bp
     from app.routes.configuracoes import config_bp
     from app.routes.perfil.perfil import perfil_bp
+    from app.routes.documentos import documentos_bp
 
     app.register_blueprint(auth_bp)
     app.register_blueprint(dashboard_bp)
@@ -57,6 +58,7 @@ def create_app(config_class=None):
     app.register_blueprint(patrimonio_bp)
     app.register_blueprint(config_bp)
     app.register_blueprint(perfil_bp)
+    app.register_blueprint(documentos_bp)
     
     # -----------------------------
     # 📅 Context processor para ano atual e timezone

@@ -1,0 +1,157 @@
+{% extends "base.html" %}
+{% block title %}Nova Ata{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+
+  <!-- Cabeçalho -->
+  <div class="d-flex justify-content-between align-items-center mb-3">
+    <h2 class="text-primary">
+      <i class="bi bi-plus-circle me-2"></i> Nova Ata
+    </h2>
+  </div>
+
+  <!-- Formulário -->
+  <form method="POST" action="{{ url_for('documentos.nova_ata') }}">
+    {{ form.hidden_tag() }}
+
+    <div class="row g-3">
+      <div class="col-md-6">
+        <div class="card shadow-sm">
+          <div class="card-header bg-primary text-white">
+            <i class="bi bi-journal-text me-1"></i> Título da Ata
+          </div>
+          <div class="card-body">
+            {{ form.titulo(class="form-control", placeholder="Digite o título da reunião") }}
+          </div>
+        </div>
+      </div>
+
+      <div class="col-md-6">
+        <div class="card shadow-sm">
+          <div class="card-header bg-primary text-white">
+            <i class="bi bi-calendar-event me-1"></i> Data da Reunião
+          </div>
+          <div class="card-body">
+            {{ form.data_reuniao(class="form-control", type="date", placeholder="Selecione a data da reunião") }}
+          </div>
+        </div>
+      </div>
+
+      <!-- Novo campo: Tipo -->
+      <div class="col-md-6">
+        <div class="card shadow-sm">
+          <div class="card-header bg-info text-white">
+            <i class="bi bi-tags me-1"></i> Tipo da Ata
+          </div>
+          <div class="card-body">
+            {{ form.tipo(class="form-select", placeholder="Escolha o tipo da ata") }}
+          </div>
+        </div>
+      </div>
+
+      <!-- Novo campo: Situação -->
+      <div class="col-md-6">
+        <div class="card shadow-sm">
+          <div class="card-header bg-info text-white">
+            <i class="bi bi-flag me-1"></i> Situação
+          </div>
+          <div class="card-body">
+            {{ form.situacao(class="form-select", placeholder="Defina a situação da ata") }}
+          </div>
+        </div>
+      </div>
+
+      <div class="col-md-6">
+        <div class="card shadow-sm">
+          <div class="card-header bg-info text-white">
+            <i class="bi bi-geo-alt me-1"></i> Local
+          </div>
+          <div class="card-body">
+            {{ form.local(class="form-control", placeholder="Informe o local da reunião") }}
+          </div>
+        </div>
+      </div>
+
+      <div class="col-md-6">
+        <div class="card shadow-sm">
+          <div class="card-header bg-info text-white">
+            <i class="bi bi-person-badge me-1"></i> Presidente
+          </div>
+          <div class="card-body">
+            {{ form.presidente(class="form-control", placeholder="Nome do presidente da reunião") }}
+          </div>
+        </div>
+      </div>
+
+      <div class="col-md-6">
+        <div class="card shadow-sm">
+          <div class="card-header bg-info text-white">
+            <i class="bi bi-person-lines-fill me-1"></i> Secretário
+          </div>
+          <div class="card-body">
+            {{ form.secretario(class="form-control", placeholder="Nome do secretário da reunião") }}
+          </div>
+        </div>
+      </div>
+
+      <div class="col-md-6">
+        <div class="card shadow-sm">
+          <div class="card-header bg-info text-white">
+            <i class="bi bi-people-fill me-1"></i> Participantes
+          </div>
+          <div class="card-body">
+            {{ form.participantes(class="form-control", rows="3", placeholder="Liste os participantes da reunião") }}
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Campos de texto maiores -->
+    <div class="row g-3 mt-3">
+      <div class="col-md-12">
+        <div class="card shadow-sm">
+          <div class="card-header bg-warning text-dark">
+            <i class="bi bi-list-check me-1"></i> Pauta
+          </div>
+          <div class="card-body">
+            {{ form.pauta(class="form-control", rows="4", placeholder="Descreva os pontos discutidos na reunião") }}
+          </div>
+        </div>
+      </div>
+
+      <div class="col-md-12">
+        <div class="card shadow-sm">
+          <div class="card-header bg-success text-white">
+            <i class="bi bi-check2-circle me-1"></i> Deliberações
+          </div>
+          <div class="card-body">
+            {{ form.deliberacoes(class="form-control", rows="4", placeholder="Informe as decisões tomadas") }}
+          </div>
+        </div>
+      </div>
+
+      <div class="col-md-12">
+        <div class="card shadow-sm">
+          <div class="card-header bg-secondary text-white">
+            <i class="bi bi-pencil-square me-1"></i> Observações
+          </div>
+          <div class="card-body">
+            {{ form.observacoes(class="form-control", rows="3", placeholder="Adicione observações adicionais, se houver") }}
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Botões -->
+    <div class="mt-4 d-flex justify-content-end gap-2">
+      <button type="submit" class="btn btn-success d-flex align-items-center">
+        <i class="bi bi-save me-1"></i> Salvar
+      </button>
+      <a href="{{ url_for('documentos.listar_atas') }}" class="btn btn-secondary d-flex align-items-center">
+        <i class="bi bi-x-circle me-1"></i> Cancelar
+      </a>
+    </div>
+  </form>
+</div>
+{% endblock %}

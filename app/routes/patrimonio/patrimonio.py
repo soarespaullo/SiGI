@@ -42,10 +42,9 @@ def listar_patrimonios():
 
     patrimonios = Patrimonio.query.order_by(Patrimonio.nome.asc()).paginate(page=page, per_page=10)
 
-    if patrimonios.total == 0:
-        flash("Nenhum patrimônio encontrado", "warning")
-
+    # 👉 não dispara flash aqui, o template já mostra mensagem quando não há patrimônios
     return render_template("patrimonios/listar_patrimonios.html", patrimonios=patrimonios)
+
 
 # -----------------------------
 # ➕ Criar novo Patrimônio
@@ -128,6 +127,7 @@ def excluir_patrimonio(id):
     flash("Patrimônio excluído com sucesso!", "info")
     return redirect(url_for("patrimonio.listar_patrimonios"))
 
+
 # -----------------------------
 # 🔍 Buscar Patrimônios com paginação
 # -----------------------------
@@ -151,15 +151,18 @@ def buscar_patrimonios():
     # 🔹 Só mostra mensagem se realmente houve busca
     if termo:
         if patrimonios.total == 0:
-            flash("Nenhum patrimônio encontrado", "warning")
+            flash("Nenhum patrimônio corresponde ao termo pesquisado", "warning")
         elif patrimonios.total == 1:
             flash("1 patrimônio encontrado", "info")
         else:
-            flash(f"{patrimonios.total} patrimônio(s) encontrado(s)", "info")
+            flash(f"{patrimonios.total} patrimônio(s) encontrados", "info")
+
+        # 👇 log da busca
         from utils.logs import registrar_log
-        registrar_log(current_user.nome, f"Buscou patrimônio com termo: {termo}", "sucesso")  # 👈 log
+        registrar_log(current_user.nome, f"Buscou patrimônio com termo: {termo}", "sucesso")
 
     return render_template("patrimonios/listar_patrimonios.html", patrimonios=patrimonios, termo=termo)
+    
 
 # -----------------------------
 # 📦 Inventário de Patrimônios
