@@ -22,7 +22,7 @@ def admin_required(f):
 @admin_required
 def configurar_mail():
     form = MailConfigForm()
-    dotenv_path = os.path.join(os.getcwd(), ".env")  # ajusta conforme sua estrutura
+    dotenv_path = "/var/www/sigi/.env" # ajusta conforme sua estrutura
 
     if form.validate_on_submit():
         set_key(dotenv_path, "MAIL_SERVER", form.mail_server.data)
