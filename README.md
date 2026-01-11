@@ -167,10 +167,10 @@ sudo apt install certbot python3-certbot-apache -y
 sudo certbot --apache -d sigi.seudominio.com
 ```
 
-- 🔒 Configura automaticamente HTTPS com Let’s Encrypt.
+> 🔒 Configura automaticamente HTTPS com Let’s Encrypt.
 
 
-- Proteger .env:
+## Proteger .env:
 
 ```
 sudo chown www-data:www-data /var/www/sigi/.env
