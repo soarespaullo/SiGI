@@ -4,7 +4,10 @@ from functools import wraps
 from dotenv import set_key
 import os
 from .forms import MailConfigForm
-from utils.logs import registrar_log   # 👈 importa função de log
+from utils.logs import registrar_log
+
+# Lê o caminho do .env a partir da variável DOTENV_PATH
+dotenv_path = os.environ.get("DOTENV_PATH", os.path.join(os.path.dirname(__file__), "..", ".env"))
 
 mail_bp = Blueprint("mail", __name__, url_prefix="/mail")
 
@@ -22,7 +25,6 @@ def admin_required(f):
 @admin_required
 def configurar_mail():
     form = MailConfigForm()
-    dotenv_path = "/var/www/sigi/.env" # ajusta conforme sua estrutura
 
     if form.validate_on_submit():
         set_key(dotenv_path, "MAIL_SERVER", form.mail_server.data)
@@ -34,7 +36,7 @@ def configurar_mail():
         set_key(dotenv_path, "MAIL_DEFAULT_NAME", form.mail_default_name.data)
         set_key(dotenv_path, "MAIL_DEFAULT_EMAIL", form.mail_default_email.data)
 
-        registrar_log(current_user.nome, "Atualizou configurações de e-mail", "sucesso")  # 👈 log
+        registrar_log(current_user.nome, "Atualizou configurações de e-mail", "sucesso")
         flash("Configurações de e-mail salvas com sucesso!", "success")
         return redirect(url_for("configuracoes.mail.configurar_mail"))
 
