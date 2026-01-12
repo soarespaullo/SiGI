@@ -5,14 +5,12 @@ from wtforms.validators import DataRequired, Optional
 class AtaForm(FlaskForm):
     titulo = StringField("Título da Ata", validators=[DataRequired()])
 
-    # Ajuste: adicionando format="%Y-%m-%d"
     data_reuniao = DateField(
         "Data da Reunião",
         format="%Y-%m-%d",
         validators=[DataRequired()]
     )
 
-    # Novo campo: Tipo da Ata
     tipo = SelectField(
         "Tipo da Ata",
         choices=[
@@ -26,7 +24,6 @@ class AtaForm(FlaskForm):
         validators=[DataRequired()]
     )
 
-    # Novo campo: Situação da Ata
     situacao = SelectField(
         "Situação da Ata",
         choices=[

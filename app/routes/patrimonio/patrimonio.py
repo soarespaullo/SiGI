@@ -72,7 +72,7 @@ def novo_patrimonio():
         db.session.add(item)
         db.session.commit()
         registrar_log(current_user.nome, f"Cadastrou patrimônio: {item.nome}", "sucesso")  # 👈 log
-        flash("Patrimônio cadastrado com sucesso!", "success")
+        flash(f"Patrimônio {item.nome} cadastrado com sucesso!", "success")
         return redirect(url_for("patrimonio.listar_patrimonios"))
     else:
         if request.method == "POST":
@@ -105,7 +105,7 @@ def editar_patrimonio(id):
 
         db.session.commit()
         registrar_log(current_user.nome, f"Editou patrimônio: {item.nome}", "sucesso")  # 👈 log
-        flash("Patrimônio atualizado com sucesso!", "success")
+        flash(f"Patrimônio {item.nome} atualizado com sucesso!", "success")
         return redirect(url_for("patrimonio.listar_patrimonios"))
     else:
         if request.method == "POST":
@@ -124,7 +124,7 @@ def excluir_patrimonio(id):
     db.session.commit()
     from utils.logs import registrar_log
     registrar_log(current_user.nome, f"Excluiu patrimônio: {item.nome}", "sucesso")  # 👈 log
-    flash("Patrimônio excluído com sucesso!", "info")
+    flash(f"Patrimônio {item.nome} excluído com sucesso!", "danger")
     return redirect(url_for("patrimonio.listar_patrimonios"))
 
 
@@ -194,11 +194,12 @@ def inventario():
         else:
             categorias[cat] = {"qtde": 1, "valor": valor}
 
-    if not patrimonios:
-        flash("Nenhum patrimônio encontrado para o inventário", "warning")
+    # 🔹 Só mostra aviso se houve filtro aplicado e não retornou nada
+    if not patrimonios and (categoria or situacao):
+        flash("Nenhum patrimônio encontrado com os filtros aplicados", "warning")
 
     from utils.logs import registrar_log
-    registrar_log(current_user.nome, "Gerou inventário de patrimônios", "sucesso")  # 👈 log
+    registrar_log(current_user.nome, "Gerou inventário de patrimônios", "sucesso")
 
     return render_template(
         "patrimonios/inventario.html",
@@ -208,3 +209,4 @@ def inventario():
         categoria=categoria,
         situacao=situacao
     )
+

@@ -1,0 +1,71 @@
+{% extends "base.html" %}
+{% block title %}Detalhes da Carta{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+
+  <!-- Cabeçalho -->
+  <div class="d-flex justify-content-between align-items-center mb-4">
+    <h2 class="text-primary mb-0">
+      <i class="bi bi-envelope-open me-2"></i> {{ carta.titulo }}
+    </h2>
+    <a href="{{ url_for('documentos.cartas.listar_cartas') }}" class="btn btn-outline-secondary">
+      <i class="bi bi-arrow-left me-1"></i> Voltar
+    </a>
+  </div>
+
+  <!-- Informações principais -->
+  <div class="card shadow-sm border-0 mb-4">
+    <div class="card-body">
+      <div class="row mb-2">
+        <div class="col-md-6">
+          <p class="mb-1"><strong>Remetente:</strong> {{ carta.remetente or "-" }}</p>
+        </div>
+        <div class="col-md-6">
+          <p class="mb-1"><strong>Destinatário:</strong> {{ carta.destinatario or "-" }}</p>
+        </div>
+      </div>
+      <div class="row mb-2">
+        <div class="col-md-6">
+          <p class="mb-1"><strong>Cidade:</strong> {{ carta.cidade or "-" }}</p>
+        </div>
+        <div class="col-md-6">
+          <p class="mb-1"><strong>Data:</strong> {{ carta.data_emissao.strftime("%d/%m/%Y") if carta.data_emissao else "-" }}</p>
+        </div>
+      </div>
+      <div class="row mb-2">
+        <div class="col-md-12">
+          <p class="mb-1"><strong>Situação:</strong> 
+            {% if carta.situacao %}
+              {% if carta.situacao|lower == 'enviado' %}
+                <span class="badge bg-warning text-dark">Enviado</span>
+              {% elif carta.situacao|lower == 'entregue' %}
+                <span class="badge bg-success">Entregue</span>
+              {% else %}
+                <span class="badge bg-secondary">{{ carta.situacao }}</span>
+              {% endif %}
+            {% else %}
+              <span class="badge bg-secondary">-</span>
+            {% endif %}
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Corpo da carta -->
+  <div class="card shadow-sm border-0">
+    <div class="card-header bg-primary text-white">
+      <i class="bi bi-file-text me-1"></i> Conteúdo da Carta
+    </div>
+    <div class="card-body">
+      <div class="p-3 bg-light rounded" style="min-height: 150px;">
+        <p class="mb-0" style="white-space: pre-line; font-size: 1.1rem; line-height: 1.6;">
+          {{ carta.corpo }}
+        </p>
+      </div>
+    </div>
+  </div>
+
+</div>
+{% endblock %}

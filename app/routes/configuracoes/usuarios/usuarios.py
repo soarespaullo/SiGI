@@ -63,9 +63,10 @@ def novo_usuario():
                 db.session.commit()  # segundo commit para atualizar a foto
 
         registrar_log(current_user.nome, f"Criou usuário: {novo.email}", "sucesso")
-        flash("Usuário criado com sucesso!", "success")
+        flash(f"Usuário {novo.nome} criado com sucesso!", "success")
         return redirect(url_for("configuracoes.usuarios.usuarios_page"))
     return render_template("configuracoes/novo_usuario.html", form=form)
+    
 
 @usuarios_bp.route("/<int:id>/editar", methods=["GET", "POST"])
 @admin_required
@@ -106,9 +107,10 @@ def editar_usuario(id):
 
         db.session.commit()
         registrar_log(current_user.nome, f"Editou usuário: {usuario.email}", "sucesso")
-        flash("Usuário atualizado com sucesso!", "success")
+        flash(f"Usuário {novo.nome} atualizado com sucesso!", "success")
         return redirect(url_for("configuracoes.usuarios.usuarios_page"))
     return render_template("configuracoes/editar_usuario.html", form=form, usuario=usuario)
+    
 
 @usuarios_bp.route("/<int:id>/excluir", methods=["POST"])
 @admin_required
@@ -126,7 +128,7 @@ def excluir_usuario(id):
     db.session.commit()
 
     registrar_log(current_user.nome, f"Excluiu usuário: {usuario.email}", "sucesso")
-    flash("Usuário excluído com sucesso!", "success")
+    flash(f"Usuário {usuario.nome} excluído com sucesso!", "danger")
     return redirect(url_for("configuracoes.usuarios.usuarios_page"))
 
 @usuarios_bp.route("/<int:id>/toggle", methods=["POST"])
@@ -137,10 +139,11 @@ def toggle_usuario(id):
     db.session.commit()
     registrar_log(current_user.nome, f"Trocou status do usuário: {usuario.email} para {'ativo' if usuario.ativo else 'inativo'}", "sucesso")
     flash(
-        f"Usuário {usuario.nome} foi {'ativado' if usuario.ativo else 'desativado'}.",
+        f"Usuário {novo.nome} foi {'ativado' if usuario.ativo else 'desativado'}.",
         "success" if usuario.ativo else "warning"
     )
     return redirect(url_for("configuracoes.usuarios.usuarios_page"))
+
 
 @usuarios_bp.route("/<int:id>/remover_foto", methods=["POST"])
 @admin_required

@@ -1,0 +1,131 @@
+{% extends "base.html" %}
+{% block title %}Cartas - SiGI{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+
+  <!-- Cabeçalho com botão Nova Carta -->
+  <div class="d-flex justify-content-between align-items-center mb-2">
+    <h2><i class="bi bi-envelope-paper text-primary me-2"></i> Cartas</h2>
+    <a href="{{ url_for('documentos.cartas.nova_carta') }}" class="btn btn-success">
+      <i class="bi bi-plus-circle me-1"></i> Nova Carta
+    </a>
+  </div>
+
+  <!-- Mensagem de topo -->
+  <p class="text-muted mb-3">
+    <i class="bi bi-info-circle me-1"></i> Aqui estão todas as cartas cadastradas em sua igreja
+  </p>
+
+  <!-- Campo de busca -->
+  <form class="d-flex align-items-center mb-3 gap-2" style="max-width: 600px;" method="get" action="{{ url_for('documentos.cartas.buscar_cartas') }}">
+    <input name="q" id="searchInput" type="text" class="form-control"
+           placeholder="Buscar por título, remetente ou destinatário" value="{{ termo if termo }}">
+    <button class="btn btn-primary d-flex align-items-center" type="submit">
+      <i class="bi bi-search me-1"></i>
+      <span>Buscar</span>
+    </button>
+  </form>
+
+  <!-- Tabela de cartas -->
+  <div class="table-responsive shadow-sm">
+    <table class="table table-striped table-hover align-middle">
+      <thead class="table-primary">
+        <tr>
+          <th scope="col">Título</th>
+          <th scope="col">Remetente</th>
+          <th scope="col">Destinatário</th>
+          <th scope="col">Data</th>
+          <th scope="col">Situação</th>
+          <th scope="col" class="text-center">Ações</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% if cartas.items %}
+          {% for carta in cartas.items %}
+          <tr>
+            <td>{{ carta.titulo }}</td>
+            <td>{{ carta.remetente or '-' }}</td>
+            <td>{{ carta.destinatario or '-' }}</td>
+            <td>{{ carta.data_emissao.strftime('%d/%m/%Y') if carta.data_emissao else '-' }}</td>
+            <td>
+              {% if carta.situacao %}
+                {% if carta.situacao|lower == 'enviado' %}
+                  <span class="badge bg-warning text-dark">Enviado</span>
+                {% elif carta.situacao|lower == 'entregue' %}
+                  <span class="badge bg-success">Entregue</span>
+                {% elif carta.situacao|lower == 'aprovado' %}
+                  <span class="badge bg-primary">Aprovado</span>
+                {% else %}
+                  <span class="badge bg-secondary">{{ carta.situacao }}</span>
+                {% endif %}
+              {% else %}
+                <span class="badge bg-secondary">-</span>
+              {% endif %}
+            </td>
+            <td class="text-center">
+              <a href="{{ url_for('documentos.cartas.visualizar_carta', id=carta.id) }}" class="btn btn-sm btn-success">
+                <i class="bi bi-eye"></i>
+              </a>
+              <a href="{{ url_for('documentos.cartas.editar_carta', id=carta.id) }}" class="btn btn-sm btn-primary">
+                <i class="bi bi-pencil-square"></i>
+              </a>
+              <!-- Botão que abre modal -->
+              <button type="button" class="btn btn-sm btn-danger" data-bs-toggle="modal" data-bs-target="#confirmDelete{{ carta.id }}">
+                <i class="bi bi-trash"></i>
+              </button>
+            </td>
+          </tr>
+          {% endfor %}
+        {% else %}
+          <tr>
+            <td colspan="6" class="text-center text-muted">Nenhuma carta cadastrada até o momento.</td>
+          </tr>
+        {% endif %}
+      </tbody>
+    </table>
+  </div>
+
+  <!-- Contador de registros de cartas -->
+  {% if cartas.items %}
+    <p class="mt-2 text-muted">
+       {{ cartas.items|length }} cartas nesta página
+    </p>
+  {% endif %}
+
+  <!-- 🔹 Inclusão da paginação -->
+  {% set pagination = cartas %}
+  {% include "pagination/pagination.html" %}
+</div>
+{% endblock %}
+
+{% block modals %}
+  {% for carta in cartas.items %}
+    <!-- 🔹 Modal de confirmação de exclusão -->
+    <div class="modal fade" id="confirmDelete{{ carta.id }}" tabindex="-1" aria-labelledby="confirmDeleteLabel{{ carta.id }}" aria-hidden="true">
+      <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+          <div class="modal-header bg-gradient-base">
+            <h5 class="modal-title" id="confirmDeleteLabel{{ carta.id }}">Confirmar Exclusão</h5>
+            <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Fechar"></button>
+          </div>
+          <div class="modal-body">
+            Tem certeza que deseja excluir a carta <strong>{{ carta.titulo }}</strong>?  
+            Esta ação não poderá ser desfeita.
+          </div>
+          <div class="modal-footer">
+            <form method="POST" action="{{ url_for('documentos.cartas.excluir_carta', id=carta.id) }}" style="display:inline;">
+              <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+              <button type="submit" class="btn btn-danger">
+                <i class="bi bi-trash me-1"></i> Excluir
+              </button>
+            </form>
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+              <i class="bi bi-x-circle me-1"></i> Cancelar
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  {% endfor %}
+{% endblock %}

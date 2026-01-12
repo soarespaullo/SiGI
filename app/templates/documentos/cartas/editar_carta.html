@@ -1,0 +1,64 @@
+{% extends "base.html" %}
+{% block title %}Editar Carta{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+
+  <!-- Cabeçalho -->
+  <div class="d-flex justify-content-between align-items-center mb-3">
+    <h2 class="text-primary">
+      <i class="bi bi-pencil-square me-2"></i> Editar Carta
+    </h2>
+  </div>
+
+  <!-- Formulário -->
+  <form method="POST" action="{{ url_for('documentos.cartas.editar_carta', id=carta.id) }}">
+    {{ form.hidden_tag() }}
+
+    <div class="mb-3">
+      <label class="form-label">Título</label>
+      {{ form.titulo(class="form-control") }}
+    </div>
+
+    <div class="mb-3">
+      <label class="form-label">Remetente</label>
+      {{ form.remetente(class="form-control") }}
+    </div>
+
+    <div class="mb-3">
+      <label class="form-label">Destinatário</label>
+      {{ form.destinatario(class="form-control") }}
+    </div>
+
+    <div class="mb-3">
+      <label class="form-label">Cidade</label>
+      {{ form.cidade(class="form-control") }}
+    </div>
+
+    <div class="mb-3">
+      <label class="form-label">Situação</label>
+      {{ form.situacao(class="form-select") }}
+    </div>
+
+    <div class="mb-3">
+      <label class="form-label">Data</label>
+      {{ form.data_emissao(class="form-control", type="date") }}
+    </div>
+
+    <div class="mb-3">
+      <label class="form-label">Corpo da Carta</label>
+      {{ form.corpo(class="form-control", rows="6") }}
+    </div>
+
+    <!-- Botões -->
+    <div class="mt-3 d-flex justify-content-start gap-2">
+      <button type="submit" class="btn btn-primary">
+        <i class="bi bi-save me-1"></i> Atualizar
+      </button>
+      <a href="{{ url_for('documentos.cartas.listar_cartas') }}" class="btn btn-secondary">
+        <i class="bi bi-x-circle me-1"></i> Cancelar
+      </a>
+    </div>
+  </form>
+</div>
+{% endblock %}

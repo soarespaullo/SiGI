@@ -1,0 +1,60 @@
+{% extends "base.html" %}
+{% block title %}Editar Certificado - SiGI{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+  <h2 class="text-primary mb-3">
+    <i class="bi bi-pencil-square me-2"></i> Editar Certificado
+  </h2>
+
+  <form method="POST">
+    {{ form.hidden_tag() }}
+
+    <!-- Título -->
+    <div class="mb-3">
+      {{ form.titulo.label(class="form-label") }}
+      {{ form.titulo(class="form-control", placeholder="Digite o título do certificado") }}
+    </div>
+
+    <!-- Nome do participante -->
+    <div class="mb-3">
+      {{ form.criado_por.label(class="form-label") }}
+      {{ form.criado_por(class="form-control", placeholder="Nome do participante") }}
+    </div>
+
+    <!-- Evento -->
+    <div class="mb-3">
+      {{ form.evento.label(class="form-label") }}
+      {{ form.evento(class="form-control", placeholder="Nome do evento") }}
+    </div>
+
+    <!-- Data de emissão -->
+    <div class="mb-3">
+      {{ form.data_emissao.label(class="form-label") }}
+      {{ form.data_emissao(class="form-control", type="date") }}
+    </div>
+
+    <!-- Corpo do certificado -->
+    <div class="mb-3">
+      {{ form.corpo.label(class="form-label") }}
+      {{ form.corpo(class="form-control", rows="4", placeholder="Texto do certificado") }}
+    </div>
+
+    <!-- Situação -->
+    <div class="mb-3">
+      {{ form.situacao.label(class="form-label") }}
+      {{ form.situacao(class="form-select") }}
+    </div>
+
+    <!-- Botões -->
+    <div class="mt-3 d-flex gap-2">
+      <button type="submit" class="btn btn-primary">
+        <i class="bi bi-save me-1"></i> Atualizar
+      </button>
+      <a href="{{ url_for('documentos.certificados.listar_certificados') }}" class="btn btn-secondary">
+        <i class="bi bi-x-circle me-1"></i> Cancelar
+      </a>
+    </div>
+  </form>
+</div>
+{% endblock %}

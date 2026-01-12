@@ -47,7 +47,7 @@ def novo_evento():
         db.session.add(evento)
         db.session.commit()
         registrar_log(current_user.nome, f"Criou evento: {evento.titulo}", "sucesso")  # 👈 log
-        flash("Evento criado com sucesso!", "success")
+        flash(f"Evento {evento.titulo} criado com sucesso!", "success")
         return redirect(url_for("event.listar_eventos"))
     return render_template("eventos/novo_evento.html", form=form)
 
@@ -77,7 +77,7 @@ def editar_evento(id):
 
         db.session.commit()
         registrar_log(current_user.nome, f"Editou evento: {evento.titulo}", "sucesso")  # 👈 log
-        flash("Evento atualizado com sucesso!", "success")
+        flash(f"Evento {evento.titulo} atualizado com sucesso!", "success")
         return redirect(url_for("event.listar_eventos"))
     return render_template("eventos/editar_evento.html", form=form, evento=evento)
 
@@ -91,7 +91,7 @@ def excluir_evento(id):
     db.session.delete(evento)
     db.session.commit()
     registrar_log(current_user.nome, f"Excluiu evento: {evento.titulo}", "sucesso")  # 👈 log
-    flash("Evento excluído com sucesso!", "success")
+    flash(f"Evento {evento.titulo} excluído com sucesso!", "danger")
     return redirect(url_for("event.listar_eventos"))
 
 # -----------------------------

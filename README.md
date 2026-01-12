@@ -108,22 +108,7 @@ mysql -u sigi_user -p sigi_db
 DATABASE_URL="mysql+pymysql://sigi_user:sigi_password@localhost:3306/sigi_db"
 ```
 
-## 4. Configurar SECRET_KEY
-
-- Gerar chave:
-
-```
-python3 -c "import secrets; print(secrets.token_hex(32))"
-```
-
-- Adicionar no .env:
-
-```
-env
-SECRET_KEY="sua_chave_gerada"
-```
-
-## 5. Configurar ambiente virtual
+## 4. Configurar ambiente virtual
 
 - No diretório do projeto:
 
@@ -143,7 +128,7 @@ sudo chown -R www-data:www-data /var/www/sigi/app/static/uploads
 sudo chmod -R 775 /var/www/sigi/app/static/uploads
 ```
 
-## 6. Configurar Apache
+## 5. Configurar Apache
 
 - Mova o arquivo de configuração:
 
@@ -160,17 +145,31 @@ sudo a2enmod wsgi
 sudo systemctl restart apache2
 ```
 
-## 7. Habilitar HTTPS (Certbot)
+## 6. Habilitar HTTPS (Certbot)
 
 ```
 sudo apt install certbot python3-certbot-apache -y
 sudo certbot --apache -d sigi.seudominio.com
 ```
 
-> 🔒 Configura automaticamente HTTPS com Let’s Encrypt.
+- 🔒 Configura automaticamente HTTPS com Let’s Encrypt.
 
+## 7. Configurar SECRET_KEY
 
-## Proteger .env:
+- Gerar chave:
+
+```
+python3 -c "import secrets; print(secrets.token_hex(32))"
+```
+
+- Adicionar no .env:
+
+```
+env
+SECRET_KEY="sua_chave_gerada"
+```
+
+- Proteger .env:
 
 ```
 sudo chown www-data:www-data /var/www/sigi/.env

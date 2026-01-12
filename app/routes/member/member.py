@@ -149,7 +149,7 @@ def cadastro_membro():
 
         db.session.add(membro)
         db.session.commit()
-        flash("Membro cadastrado com sucesso!", "success")
+        flash(f"Membro {membro.nome} cadastrado com sucesso!", "success")
 
         # Registrar log com nome do membro
         registrar_log(current_user.nome, f"Cadastro de Membro: {membro.nome}")
@@ -217,7 +217,7 @@ def editar_membro(id):
             membro.foto = None
 
         db.session.commit()
-        flash("Membro atualizado com sucesso!", "success")
+        flash(f"Membro {membro.nome} atualizado com sucesso!", "success")
 
         # Registrar log com nome do membro
         registrar_log(current_user.nome, f"Edição de Membro: {membro.nome}")
@@ -238,13 +238,12 @@ def excluir_membro(id):
 
     db.session.delete(membro)
     db.session.commit()
-    flash("Membro excluído com sucesso!", "info")
+    flash(f"Membro {membro.nome} excluído com sucesso!", "danger")
 
     # Registrar log com nome do membro
     registrar_log(current_user.nome, f"Exclusão de Membro: {nome_membro}")
 
     return redirect(url_for("member.listar_membros"))
-
 
 
 # -----------------------------
