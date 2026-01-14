@@ -46,7 +46,9 @@ class MemberForm(FlaskForm):
     ], validators=[Optional()])
 
     status = SelectField("Status", choices=[("Ativo", "Ativo"), ("Inativo", "Inativo")], validators=[Optional()])
-    data_cadastro = DateField("Data de Cadastro", format="%Y-%m-%d", validators=[Optional()])
+    # data_cadastro = DateField("Data de Cadastro", format="%Y-%m-%d", validators=[Optional()])
+    # ✅ já vem preenchido com a data atual, mas pode ser alterado
+    data_cadastro = DateField("Data de Cadastro", format="%Y-%m-%d", default=date.today, validators=[Optional()])
     numero_carteira = StringField("Número da Carteira", validators=[Optional()])
     igreja_local = StringField("Igreja Local", validators=[Optional()])
     validade = DateField("Validade da Carteira", format="%Y-%m-%d", validators=[Optional()])

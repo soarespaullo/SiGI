@@ -75,7 +75,7 @@ def buscar_membros():
 
     if termo:
         if membros.total == 0:
-            flash("Nenhum membro encontrado", "warning")
+            flash("Nenhum membro corresponde ao termo pesquisado", "warning")
         elif membros.total == 1:
             flash("1 membro encontrado", "info")
         else:
@@ -201,7 +201,8 @@ def editar_membro(id):
         membro.validade = form.validade.data or membro.validade
         membro.data_cadastro = form.data_cadastro.data or membro.data_cadastro
         membro.data_conversao = form.data_conversao.data or membro.data_conversao
-        membro.data_saida = form.data_saida.data or membro.data_saida
+        # membro.data_saida = form.data_saida.data or membro.data_saida
+        membro.data_saida = form.data_saida.data if form.data_saida.data else None
 
         # Upload da foto
         foto_file = form.foto.data

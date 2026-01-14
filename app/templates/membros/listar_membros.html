@@ -227,10 +227,12 @@
 
           <div class="collapse" id="qrCollapse">
             <div class="card card-body text-center">
+              {% if visitante_link_url %}
               <img class="img-fluid mx-auto d-block" style="max-width: 150px;"
                    src="https://api.qrserver.com/v1/create-qr-code/?size=150x150&data={{ visitante_link_url | urlencode }}"
                    alt="QR Code do link de cadastro">
               <p class="mt-2 text-muted">📱 Escaneie o QR Code com o celular</p>
+              {% endif %}
             </div>
           </div>
         </div>

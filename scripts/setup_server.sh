@@ -1,6 +1,8 @@
 #!/bin/bash
-# disable-sleep.sh
-# Script para desativar suspensão e hibernação no Ubuntu Server
+# setup-server.sh
+# Script para configurações iniciais do Ubuntu Server
+# - Desativa suspensão e hibernação
+# - Define fuso horário para America/Fortaleza
 
 echo ">> Editando /etc/systemd/logind.conf..."
 sudo sed -i 's/^#HandleSuspendKey=.*/HandleSuspendKey=ignore/' /etc/systemd/logind.conf
@@ -13,4 +15,7 @@ sudo systemctl mask sleep.target suspend.target hibernate.target hybrid-sleep.ta
 echo ">> Reiniciando systemd-logind..."
 sudo systemctl restart systemd-logind
 
-echo ">> Concluído! Suspensão e hibernação foram desativadas."
+echo ">> Configurando fuso horário para America/Fortaleza..."
+sudo timedatectl set-timezone America/Fortaleza
+
+echo ">> Concluído! Configurações iniciais aplicadas com sucesso."

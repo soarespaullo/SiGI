@@ -1,9 +1,11 @@
 from datetime import datetime
-from app.extensions import db   # ✅ importa o db único centralizado em app/extensions.py
+from app.extensions import db	# ✅ importa o db único centralizado em app/extensions.py
 
 # -----------------------------
 # 💰 Financeiro
 # -----------------------------
+TIPOS_FINANCEIRO = ("Entrada", "Saída")
+
 class Financeiro(db.Model):
     __tablename__ = "financeiro"
 
@@ -22,6 +24,12 @@ class Financeiro(db.Model):
     conciliado = db.Column(db.Boolean, default=False)
     comprovante = db.Column(db.String(200))
     criado_em = db.Column(db.DateTime, default=datetime.utcnow)
+
+    def __init__(self, **kwargs):
+        tipo = kwargs.get("tipo")
+        if tipo not in TIPOS_FINANCEIRO:
+            raise ValueError("Tipo deve ser 'Entrada' ou 'Saída'")
+        super().__init__(**kwargs)
 
     def __repr__(self):
         data_str = self.data.strftime('%d-%m-%Y') if self.data else "sem data"

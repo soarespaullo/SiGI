@@ -27,7 +27,7 @@ def visualizar_logs():
 @logs_bp.route("/remover_logs", methods=["GET"])
 @login_required
 def remover_logs():
-    limite = datetime.now() - timedelta(days=1)
+    limite = datetime.now() - timedelta(days=30)
     qtd = Log.query.filter(Log.datahora < limite).delete(synchronize_session=False)
     db.session.commit()
 
